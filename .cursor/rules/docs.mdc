@@ -1,0 +1,14 @@
+---
+description: How to write compatibility notes in this repo
+globs: docs/**/*.md
+alwaysApply: false
+---
+
+# Docs
+
+- Label each compatibility claim `observed`, `inferred`, or `open`.
+- Cite the command or file that supports an observed claim. Do not paste a full journal.
+- For each gap, name the home: an existing upstream, Fedora packaging, a config note, or this repo. One sentence on why.
+- Leave serial numbers, UUIDs, MAC addresses, SSIDs, passwords, and LAN hostnames out of the page.
+- Model board-ids and PCI ids may stay. They identify the product, not one laptop.
+- Do not copy proprietary DSP graphs or firmware into `docs/`.

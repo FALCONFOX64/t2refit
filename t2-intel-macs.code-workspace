@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "name": "t2-intel-macs",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "scan-out": true
+    }
+  }
+}

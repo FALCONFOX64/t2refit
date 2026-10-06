@@ -1,0 +1,17 @@
+---
+description: Mission, safety limits, and license split for the T2 Intel Mac project
+alwaysApply: true
+---
+
+# t2-intel-macs
+
+This is a long-term open-source project for Linux on Intel Macs with an Apple T2 chip, roughly 2018–2020. Apple Silicon is out of scope. The reference machine is a MacBookPro16,1 on Fedora. Read `docs/hardware-scan.md` and `docs/gap-analysis.md` before proposing driver or userspace work.
+
+- Prefer an existing project when it already owns the problem: t2linux, sharpenedblade COPR t2linux, deqrocks/t2bce, tiny-dfr, lemmyg/t2-apple-audio-dsp, t2-touchid. Do not vendor or fork those trees.
+- Phase 0 has no driver code. A new driver needs a gap entry that names this repo as the home.
+- Documentation, the scanner, and userspace stay Apache-2.0. Future kernel code is GPL-2.0-or-later so it can be upstreamed.
+- Do not install packages, edit `/etc`, change boot configuration, rebuild the initramfs, load or unload modules, download firmware, or enroll fingerprints unless the user asks in this chat.
+- Do not bypass the T2 Secure Enclave, extract biometric templates, or circumvent firmware signature checks. Touch ID enrollment on a macOS-free disk stays documented as blocked.
+- Do not commit firmware blobs, DSP coefficient files, serial numbers, UUIDs, MAC addresses, SSIDs, or passwords.
+- Commit as `FALCONFOX64 <217426068+FALCONFOX64@users.noreply.github.com>` using `GIT_AUTHOR_*` and `GIT_COMMITTER_*` for that commit only. No `Co-authored-by` trailer. Do not change global git config. Do not push unless the user asks.
+- Trust a live command over notes in this repo when they disagree, and record the disagreement.

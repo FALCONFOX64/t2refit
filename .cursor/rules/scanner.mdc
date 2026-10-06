@@ -1,0 +1,16 @@
+---
+description: Rules for the read-only T2 host scanner
+globs: scripts/**/*.sh
+alwaysApply: false
+---
+
+# Scanner
+
+`scripts/scan-t2-host.sh` is read-only. Keep it that way.
+
+- No sudo, no network, no package installs, no writes under `/etc` or `/sys`.
+- Never read or print `product_serial`, `product_uuid`, `board_serial`, Wi-Fi connection profiles, or `nmcli` secrets.
+- Print device ids, driver names, service state, and firmware version strings. Redact MAC addresses, UUIDs, and IPv6 link-local addresses.
+- Exit 0 when the report was printed, including when an optional tool is missing.
+- New checks belong in a `[flags]` line of the form `flag name=yes|no`.
+- SPDX header stays `Apache-2.0`.

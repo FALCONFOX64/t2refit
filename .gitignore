@@ -1,0 +1,7 @@
+scan-out/
+*.bin
+*.clm_blob
+*.txcap_blob
+*.hcd
+*serial*
+*uuid*
