@@ -1,4 +1,4 @@
-t2-intel-macs licenses future kernel code under GPL-2.0-or-later.
+t2refit licenses future kernel code under GPL-2.0-or-later.
 
 The "or later" permission is a grant by this project for kernel code that carries an SPDX header of GPL-2.0-or-later. It is not a change to the license text below. Documentation, scripts, and userspace are Apache-2.0. See README.md.
 

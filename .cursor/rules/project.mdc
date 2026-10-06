@@ -3,7 +3,7 @@ description: Mission, safety limits, and license split for the T2 Intel Mac proj
 alwaysApply: true
 ---
 
-# t2-intel-macs
+# t2refit
 
 This is a long-term open-source project for Linux on Intel Macs with an Apple T2 chip, roughly 2018–2020. Apple Silicon is out of scope. The reference machine is a MacBookPro16,1 on Fedora. Read `docs/hardware-scan.md` and `docs/gap-analysis.md` before proposing driver or userspace work.
 

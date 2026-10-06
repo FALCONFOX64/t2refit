@@ -1,6 +1,8 @@
-# t2-intel-macs
+# t2refit
 
-Open-source workbench for running Linux well on older Intel Macs that have an Apple T2 chip (about 2018–2020).
+Open-source workbench for refitting older Intel Macs that have an Apple T2 chip (about 2018–2020) so Linux can be the daily driver.
+
+Public repo: https://github.com/FALCONFOX64/t2refit
 
 The reference machine is a MacBookPro16,1 running Fedora 44 with the sharpenedblade T2 kernel. This repository records what that machine actually does, which existing project should own each gap, and a read-only scanner you can run again later. It does not replace [t2linux](https://t2linux.org/). t2linux, tiny-dfr, t2bce, and t2-touchid already cover most of the hardware. This repo fills the gaps they do not, and it does not vendor their trees.
 
@@ -39,7 +41,7 @@ Kernel code uses GPL-2.0-or-later so it can be proposed upstream. There is no ke
 
 ## Cursor
 
-Open `t2-intel-macs.code-workspace` in Cursor. Project rules live in `.cursor/rules/` and travel with the repo:
+Open `t2refit.code-workspace` in Cursor. Project rules live in `.cursor/rules/` and travel with the repo:
 
 - `project.mdc` applies to every chat.
 - `scanner.mdc` applies while editing `scripts/**/*.sh`.
