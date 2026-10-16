@@ -6,7 +6,7 @@ Approved desktop software for that machine. Install with Fedora `dnf`, or as a F
 
 None of these touch Touch ID, the T2 services, or the display mux. firewalld and SELinux are already on. Keep both on. The Touch ID setup depends on SELinux staying enforcing. Nothing was installed to record this list, and `/etc` was not modified.
 
-Claim label: approved list. The note on each row is the reason it was approved. The 2026-10-06 scan in `docs/hardware-scan.md` did not measure these packages.
+This page records an approved install list. It is not a measurement from the 2026-10-06 scan in `docs/hardware-scan.md`. Whether these packages run on this MacBookPro16,1 was not measured. Label: open. The note on each row is why the package was approved.
 
 Home for each package is Fedora packaging, Flathub, GitHub, or PortSwigger, as the row says. This repo records the list. The named upstream ships the package.
 
