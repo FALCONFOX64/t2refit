@@ -1,0 +1,2158 @@
+# SPDX-License-Identifier: Apache-2.0
+# Source of truth for the Fedora offensive-lab workspace.
+# fedora = "official" was in the Fedora 44 compose according to mdapi on 2026-10-16.
+# fedora = "copr" was not in that compose; copr names a project that had a build that day.
+# fedora = "upstream" has no official Fedora 44 package. Build from the upstream project.
+# License is the upstream project license, not every bundled-library tag in a Fedora spec.
+
+[meta]
+fedora_release = "44"
+checked = "2026-10-16"
+kali_meta = "https://www.kali.org/tools/kali-meta/"
+
+[[groups]]
+id = "recon"
+title = "Recon"
+kali_metapackages = ["kali-tools-information-gathering", "kali-tools-identify"]
+summary = """
+Name the hosts, DNS names, and services on a network you are allowed to test. This covers Kali's information-gathering menu and the identify menu's scanners that have a Fedora path.
+"""
+
+[[groups]]
+id = "web"
+title = "Web"
+kali_metapackages = ["kali-tools-web"]
+summary = """
+Check a web application you are allowed to test: content discovery, header and TLS review, and the scanners Kali ships for that menu.
+"""
+
+[[groups]]
+id = "vuln"
+title = "Vulnerability checks"
+kali_metapackages = ["kali-tools-vulnerability"]
+summary = """
+Match known issues and review local hardening. These rows are scanners and benchmarks. They do not describe how to exploit a finding.
+"""
+
+[[groups]]
+id = "wireless"
+title = "Wireless"
+kali_metapackages = ["kali-tools-802-11", "kali-tools-wireless"]
+summary = """
+802.11 tools from Kali's wireless menus. On the reference MacBookPro16,1 the built-in BCM4364 is a station interface (observed, docs/hardware-scan.md). Use a separate adapter for wireless lab work. Monitor mode on this host was not tested (open).
+"""
+
+[[groups]]
+id = "bluetooth"
+title = "Bluetooth"
+kali_metapackages = ["kali-tools-bluetooth"]
+summary = """
+Bluetooth utilities. This host's controller is powered on and the patch file BCM.hcd is missing (observed, docs/hardware-scan.md). Do not download firmware from this repo. Use a separate adapter for Bluetooth lab work.
+"""
+
+[[groups]]
+id = "passwords"
+title = "Passwords"
+kali_metapackages = ["kali-tools-passwords", "kali-tools-gpu"]
+summary = """
+Offline recovery and online login checks for hashes and accounts you are authorized to test. Hashcat is also Kali's practical GPU tool on Fedora. Kali's password menu additionally ships Windows credential-dump binaries; those are not listed.
+"""
+
+[[groups]]
+id = "exploitation"
+title = "Exploitation frameworks"
+kali_metapackages = ["kali-tools-exploitation"]
+summary = """
+Frameworks that hold public exploit modules. Each row names the project and how to get it onto Fedora. Modules, payloads, and commands are out of scope.
+"""
+
+[[groups]]
+id = "tunnels"
+title = "Tunnels and proxies"
+kali_metapackages = ["kali-tools-post-exploitation"]
+summary = """
+Proxies and relays from Kali's post-exploitation menu that Fedora already packages as ordinary network tools. Implant kits, webshell collections, and credential-dump binaries from that menu are not listed.
+"""
+
+[[groups]]
+id = "social"
+title = "Social engineering"
+kali_metapackages = ["kali-tools-social-engineering"]
+summary = """
+Names of the two frameworks Kali highlights for this menu. Campaign steps are not documented.
+"""
+
+[[groups]]
+id = "sniff"
+title = "Sniffing"
+kali_metapackages = ["kali-tools-sniffing-spoofing"]
+summary = """
+Capture and review traffic on a segment you are allowed to monitor.
+"""
+
+[[groups]]
+id = "database"
+title = "Databases"
+kali_metapackages = ["kali-tools-database"]
+summary = """
+Clients for database files and lab database servers. sqlmap is listed under Web and cross-referenced here.
+"""
+
+[[groups]]
+id = "forensics"
+title = "Forensics"
+kali_metapackages = ["kali-tools-forensics", "kali-tools-recover", "kali-tools-respond"]
+summary = """
+Disk, file, and artifact examination after you already have an image or a file. This is also the Fedora-side home for Kali's recover and respond menus.
+"""
+
+[[groups]]
+id = "reversing"
+title = "Reverse engineering"
+kali_metapackages = ["kali-tools-reverse-engineering"]
+summary = """
+Disassemble and inspect binaries you are allowed to examine.
+"""
+
+[[groups]]
+id = "fuzzing"
+title = "Fuzzing"
+kali_metapackages = ["kali-tools-fuzzing"]
+summary = """
+Feed unexpected input to a local program under test. wfuzz is listed under Web and cross-referenced here.
+"""
+
+[[groups]]
+id = "crypto"
+title = "Crypto and stego"
+kali_metapackages = ["kali-tools-crypto-stego"]
+summary = """
+Steganography and small crypto helpers from Kali's crypto-stego menu.
+"""
+
+[[groups]]
+id = "sdr"
+title = "Software-defined radio"
+kali_metapackages = ["kali-tools-sdr"]
+summary = """
+Radio software for a lab radio you own.
+"""
+
+[[groups]]
+id = "rfid"
+title = "RFID"
+kali_metapackages = ["kali-tools-rfid"]
+summary = """
+RFID research tools. Kali's RFID menu also depends on GNU Radio, which is listed under software-defined radio.
+"""
+
+[[groups]]
+id = "voip"
+title = "VoIP"
+kali_metapackages = ["kali-tools-voip"]
+summary = """
+SIP test tools. Nmap and tshark are cross-referenced from their own groups.
+"""
+
+[[groups]]
+id = "detect"
+title = "Detection and hardening"
+kali_metapackages = ["kali-tools-detect", "kali-tools-protect"]
+summary = """
+Host and network detection. This is the Fedora path for Kali's detect and protect menus. Zeek and Snort were retired from Fedora, so they are upstream pointers.
+"""
+
+[[groups]]
+id = "reporting"
+title = "Reporting"
+kali_metapackages = ["kali-tools-reporting"]
+summary = """
+Screenshots, notes, and report platforms. The Fedora package ghostwriter is a Markdown editor. SpecterOps Ghostwriter is a different project, listed under AI and report helpers.
+"""
+
+[[groups]]
+id = "lab"
+title = "Lab and VMs"
+kali_metapackages = ["kali-linux-labs"]
+summary = """
+Local virtual machines and containers so a lab stays off the daily-driver network. This is the Fedora match for Kali's lab metapackage.
+"""
+
+[[groups]]
+id = "hardware"
+title = "Bench hardware"
+kali_metapackages = ["kali-tools-hardware"]
+summary = """
+Serial consoles, flash programmers, and on-chip debug for a bench. These are not T2 drivers. Keyboard, Wi-Fi, audio, Touch Bar, and the Secure Enclave stay with the projects named in docs/gap-analysis.md.
+"""
+
+[[groups]]
+id = "windows"
+title = "Windows resources"
+kali_metapackages = ["kali-tools-windows-resources"]
+summary = """
+Kali's windows-resources metapackage is a set of Windows binaries, including credential tools and packers. This repo does not ship, mirror, or document them. To reach a Windows VM you own, use FreeRDP and Remmina in the lab group.
+"""
+
+[[groups]]
+id = "top10"
+title = "Kali top 10"
+kali_metapackages = ["kali-tools-top10"]
+summary = """
+Kali's ten highlighted tools, as a cross-reference. Each tool's install path is on its own row.
+"""
+
+[[groups]]
+id = "ai"
+title = "AI assistants and report helpers"
+kali_metapackages = []
+summary = """
+Local model runners and report platforms for a lab notebook. They draft and format text you already have. They are not attack agents, and this repo does not document jailbreaks.
+"""
+
+# --- recon ---
+
+[[tools]]
+id = "nmap"
+group = "recon"
+name = "Nmap"
+purpose = "Finds live hosts and open ports on a network you are allowed to test."
+upstream = "https://nmap.org/"
+license = "LicenseRef-Nmap"
+fedora = "official"
+fedora_package = "nmap"
+fedora_note = "Fedora 44 package nmap. The license tag is the Nmap license, not GPL."
+binary = "nmap"
+version_args = ["--version"]
+also_in = ["top10", "vuln", "voip"]
+
+[[tools]]
+id = "ncat"
+group = "recon"
+name = "Ncat"
+purpose = "Reads and writes TCP and UDP streams, as Nmap's netcat."
+upstream = "https://nmap.org/ncat/"
+license = "LicenseRef-Nmap"
+fedora = "official"
+fedora_package = "nmap-ncat"
+binary = "ncat"
+version_args = ["--version"]
+also_in = ["tunnels"]
+
+[[tools]]
+id = "masscan"
+group = "recon"
+name = "masscan"
+purpose = "Scans ports across an address range you are allowed to test."
+upstream = "https://github.com/robertdavidgraham/masscan"
+license = "AGPL-3.0-only"
+fedora = "official"
+fedora_package = "masscan"
+binary = "masscan"
+version_args = ["--version"]
+
+[[tools]]
+id = "zmap"
+group = "recon"
+name = "ZMap"
+purpose = "Sends one probe per address across a range you are allowed to study."
+upstream = "https://zmap.io/"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "zmap"
+binary = "zmap"
+version_args = ["--version"]
+
+[[tools]]
+id = "fping"
+group = "recon"
+name = "fping"
+purpose = "Pings many hosts you are allowed to test, in parallel."
+upstream = "https://fping.org/"
+license = "BSD-4.3TAHOE"
+fedora = "official"
+fedora_package = "fping"
+binary = "fping"
+version_args = ["--version"]
+
+[[tools]]
+id = "arp-scan"
+group = "recon"
+name = "arp-scan"
+purpose = "Lists IPv4 hosts on a local Ethernet segment you are allowed to test."
+upstream = "https://github.com/royhills/arp-scan"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "arp-scan"
+binary = "arp-scan"
+version_args = ["--version"]
+
+[[tools]]
+id = "dnsenum"
+group = "recon"
+name = "dnsenum"
+purpose = "Collects DNS records for a domain you are allowed to look up."
+upstream = "https://github.com/fwaeytens/dnsenum"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "dnsenum"
+binary = "dnsenum"
+
+[[tools]]
+id = "dnsx"
+group = "recon"
+name = "dnsx"
+purpose = "Resolves many DNS names you are allowed to look up."
+upstream = "https://github.com/projectdiscovery/dnsx"
+license = "MIT"
+fedora = "official"
+fedora_package = "dnsx"
+binary = "dnsx"
+version_args = ["--version"]
+
+[[tools]]
+id = "subfinder"
+group = "recon"
+name = "subfinder"
+purpose = "Collects subdomain names from passive sources for a domain you may test."
+upstream = "https://github.com/projectdiscovery/subfinder"
+license = "MIT"
+fedora = "official"
+fedora_package = "subfinder"
+binary = "subfinder"
+version_args = ["--version"]
+also_in = ["vuln"]
+
+[[tools]]
+id = "massdns"
+group = "recon"
+name = "massdns"
+purpose = "Resolves a large list of DNS names you are allowed to look up."
+upstream = "https://github.com/blechschmidt/massdns"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "massdns"
+binary = "massdns"
+version_args = ["--version"]
+
+[[tools]]
+id = "dig"
+group = "recon"
+name = "dig"
+purpose = "Asks a DNS server a question you are allowed to ask."
+upstream = "https://www.isc.org/bind/"
+license = "MPL-2.0"
+fedora = "official"
+fedora_package = "bind-utils"
+binary = "dig"
+version_args = ["-v"]
+
+[[tools]]
+id = "whois"
+group = "recon"
+name = "whois"
+purpose = "Looks up public registration data for a domain or address."
+upstream = "https://github.com/rfc1036/whois"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "whois"
+binary = "whois"
+
+[[tools]]
+id = "smbclient"
+group = "recon"
+name = "smbclient"
+purpose = "Talks to an SMB server you are allowed to access."
+upstream = "https://www.samba.org/"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "samba-client"
+binary = "smbclient"
+version_args = ["--version"]
+
+[[tools]]
+id = "ldapsearch"
+group = "recon"
+name = "ldapsearch"
+purpose = "Reads an LDAP directory you are allowed to query."
+upstream = "https://www.openldap.org/"
+license = "OLDAP-2.8"
+fedora = "official"
+fedora_package = "openldap-clients"
+binary = "ldapsearch"
+
+[[tools]]
+id = "snmpwalk"
+group = "recon"
+name = "snmpwalk"
+purpose = "Reads an SNMP agent you are allowed to query."
+upstream = "https://net-snmp.sourceforge.io/"
+license = "BSD-3-Clause"
+fedora = "official"
+fedora_package = "net-snmp-utils"
+binary = "snmpwalk"
+version_args = ["-V"]
+
+[[tools]]
+id = "onesixtyone"
+group = "recon"
+name = "onesixtyone"
+purpose = "Tries SNMP community strings against a host you are allowed to test."
+upstream = "https://github.com/trailofbits/onesixtyone"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "onesixtyone"
+binary = "onesixtyone"
+
+[[tools]]
+id = "p0f"
+group = "recon"
+name = "p0f"
+purpose = "Guesses operating systems from traffic you are allowed to observe."
+upstream = "https://lcamtuf.coredump.cx/p0f3/"
+license = "LGPL-2.0-or-later"
+fedora = "official"
+fedora_package = "p0f"
+binary = "p0f"
+
+[[tools]]
+id = "impacket"
+group = "recon"
+name = "Impacket"
+purpose = "Python library for SMB, LDAP, and Kerberos traffic in an authorized lab."
+upstream = "https://github.com/fortra/impacket"
+license = "Apache-2.0"
+license_note = "Modified Apache-2.0; see the upstream NOTICE."
+fedora = "official"
+fedora_package = "python3-impacket"
+python_distribution = "impacket"
+
+[[tools]]
+id = "amass"
+group = "recon"
+name = "Amass"
+purpose = "Maps DNS names for an organization you are allowed to test."
+upstream = "https://github.com/owasp-amass/amass"
+license = "Apache-2.0"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. A cybersec COPR build of the Go module did not succeed for this release."
+binary = "amass"
+version_args = ["--version"]
+
+[[tools]]
+id = "theharvester"
+group = "recon"
+name = "theHarvester"
+purpose = "Collects public emails and host names for a domain you may study."
+upstream = "https://github.com/laramies/theHarvester"
+license = "GPL-2.0-only"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "theHarvester"
+
+[[tools]]
+id = "rustscan"
+group = "recon"
+name = "RustScan"
+purpose = "Finds open ports quickly on hosts you are allowed to test, then can hand them to Nmap."
+upstream = "https://github.com/RustScan/RustScan"
+license = "GPL-3.0-only"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. The atim/rustscan COPR build for Fedora 44 had failed as of the check date."
+binary = "rustscan"
+version_args = ["--version"]
+
+[[tools]]
+id = "pd-httpx"
+group = "recon"
+name = "httpx (ProjectDiscovery)"
+purpose = "Requests many URLs you are allowed to fetch and prints response metadata."
+upstream = "https://github.com/projectdiscovery/httpx"
+license = "MIT"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. This is not the Python library named httpx."
+binary = "httpx"
+version_args = ["--version"]
+
+[[tools]]
+id = "naabu"
+group = "recon"
+name = "naabu"
+purpose = "Scans ports on hosts you are allowed to test."
+upstream = "https://github.com/projectdiscovery/naabu"
+license = "MIT"
+fedora = "upstream"
+fedora_note = "Retired in Fedora (orphaned). Not in the Fedora 44 compose."
+binary = "naabu"
+version_args = ["--version"]
+
+[[tools]]
+id = "enum4linux"
+group = "recon"
+name = "enum4linux"
+purpose = "Collects SMB and RPC information from a host you are allowed to query."
+upstream = "https://github.com/CiscoCXSecurity/enum4linux"
+license = "GPL-2.0-or-later"
+fedora = "copr"
+copr = "r3pek/cybersec"
+fedora_package = "enum4linux"
+fedora_note = "COPR build for fedora-44-x86_64 had succeeded. Enabling the COPR adds that whole project."
+binary = "enum4linux"
+
+# --- web ---
+
+[[tools]]
+id = "ffuf"
+group = "web"
+name = "ffuf"
+purpose = "Requests many paths on a web server you are allowed to test."
+upstream = "https://github.com/ffuf/ffuf"
+license = "MIT"
+fedora = "official"
+fedora_package = "ffuf"
+binary = "ffuf"
+version_args = ["--version"]
+
+[[tools]]
+id = "gobuster"
+group = "web"
+name = "gobuster"
+purpose = "Requests many paths, names, or vhosts on a server you are allowed to test."
+upstream = "https://github.com/OJ/gobuster"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "gobuster"
+binary = "gobuster"
+version_args = ["--version"]
+
+[[tools]]
+id = "whatweb"
+group = "web"
+name = "WhatWeb"
+purpose = "Prints technology fingerprints for a site you are allowed to request."
+upstream = "https://github.com/urbanadventurer/WhatWeb"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "whatweb"
+binary = "whatweb"
+version_args = ["--version"]
+
+[[tools]]
+id = "wafw00f"
+group = "web"
+name = "wafw00f"
+purpose = "Guesses whether a site you are allowed to request sits behind a web firewall."
+upstream = "https://github.com/EnableSecurity/wafw00f"
+license = "BSD-3-Clause"
+fedora = "official"
+fedora_package = "wafw00f"
+binary = "wafw00f"
+version_args = ["--version"]
+
+[[tools]]
+id = "sslscan"
+group = "web"
+name = "sslscan"
+purpose = "Lists TLS protocols and ciphers on a service you are allowed to test."
+upstream = "https://github.com/rbsec/sslscan"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "sslscan"
+binary = "sslscan"
+version_args = ["--version"]
+
+[[tools]]
+id = "testssl"
+group = "web"
+name = "testssl.sh"
+purpose = "Reviews TLS configuration on a service you are allowed to test."
+upstream = "https://github.com/testssl/testssl.sh"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "testssl"
+binary = "testssl"
+version_args = ["--version"]
+
+[[tools]]
+id = "ssh-audit"
+group = "web"
+name = "ssh-audit"
+purpose = "Reviews SSH algorithms on a server you are allowed to test."
+upstream = "https://github.com/jtesta/ssh-audit"
+license = "MIT"
+fedora = "official"
+fedora_package = "ssh-audit"
+binary = "ssh-audit"
+
+[[tools]]
+id = "nuclei"
+group = "web"
+name = "Nuclei"
+purpose = "Runs YAML checks against hosts you are allowed to test."
+upstream = "https://github.com/projectdiscovery/nuclei"
+license = "MIT"
+fedora = "official"
+fedora_package = "nuclei"
+binary = "nuclei"
+version_args = ["--version"]
+also_in = ["vuln"]
+
+[[tools]]
+id = "nikto"
+group = "web"
+name = "Nikto"
+purpose = "Requests a set of well-known web paths on a server you are allowed to test."
+upstream = "https://github.com/sullo/nikto"
+license = "GPL-2.0-only with an extra clause Fedora rejects"
+fedora = "upstream"
+fedora_note = "Retired in Fedora because the license is treated as not allowed. Not in the Fedora 44 compose."
+binary = "nikto"
+
+[[tools]]
+id = "sqlmap"
+group = "web"
+name = "sqlmap"
+purpose = "Tests a parameter you are allowed to test for SQL injection."
+upstream = "https://github.com/sqlmapproject/sqlmap"
+license = "GPL-2.0-or-later"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "sqlmap"
+also_in = ["top10", "database", "exploitation"]
+
+[[tools]]
+id = "zaproxy"
+group = "web"
+name = "OWASP ZAP"
+purpose = "Proxies and scans a web application you are allowed to test."
+upstream = "https://www.zaproxy.org/"
+license = "Apache-2.0"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. Upstream publishes its own Linux packages."
+binary = "zaproxy"
+
+[[tools]]
+id = "burpsuite"
+group = "web"
+name = "Burp Suite"
+purpose = "Commercial and community web-application testing proxy."
+upstream = "https://portswigger.net/burp/communitydownload"
+license = "proprietary"
+fedora = "upstream"
+fedora_note = "No Fedora package. Install the upstream community or pro build."
+binary = "burpsuite"
+also_in = ["top10"]
+
+[[tools]]
+id = "wfuzz"
+group = "web"
+name = "wfuzz"
+purpose = "Sends many inputs to an HTTP parameter you are allowed to test."
+upstream = "https://github.com/xmendez/wfuzz"
+license = "GPL-2.0-only"
+fedora = "upstream"
+fedora_note = "Retired in Fedora (orphaned). Not in the Fedora 44 compose."
+binary = "wfuzz"
+also_in = ["fuzzing"]
+
+[[tools]]
+id = "feroxbuster"
+group = "web"
+name = "feroxbuster"
+purpose = "Requests many paths on a web server you are allowed to test."
+upstream = "https://github.com/epi052/feroxbuster"
+license = "MIT"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. Upstream ships release binaries and a Rust crate."
+binary = "feroxbuster"
+version_args = ["--version"]
+
+[[tools]]
+id = "wpscan"
+group = "web"
+name = "WPScan"
+purpose = "Enumerates a WordPress site you are allowed to test."
+upstream = "https://github.com/wpscanteam/wpscan"
+license = "custom"
+license_note = "See the upstream license; it is not a plain OSI license."
+fedora = "copr"
+copr = "r3pek/cybersec"
+fedora_package = "rubygem-wpscan"
+fedora_note = "COPR build for fedora-44-x86_64 had succeeded. The package name is the Ruby gem."
+binary = "wpscan"
+
+[[tools]]
+id = "dirb"
+group = "web"
+name = "dirb"
+purpose = "Requests many paths on a web server you are allowed to test."
+upstream = "https://sourceforge.net/projects/dirb/"
+license = "GPL-2.0-only"
+fedora = "copr"
+copr = "r3pek/cybersec"
+fedora_package = "dirb"
+fedora_note = "COPR build for fedora-44-x86_64 had succeeded."
+binary = "dirb"
+
+[[tools]]
+id = "mitmproxy"
+group = "web"
+name = "mitmproxy"
+purpose = "Interactive HTTP proxy for traffic you are allowed to inspect."
+upstream = "https://www.mitmproxy.org/"
+license = "MIT"
+fedora = "copr"
+copr = "heffer/mitmproxy"
+fedora_package = "mitmproxy"
+fedora_note = "Not in Fedora 44. COPR heffer/mitmproxy published a fedora-44-x86_64 build."
+binary = "mitmproxy"
+also_in = ["sniff"]
+
+# --- vuln ---
+
+[[tools]]
+id = "lynis"
+group = "vuln"
+name = "Lynis"
+purpose = "Reviews local hardening on a machine you administer."
+upstream = "https://cisofy.com/lynis/"
+license = "GPL-3.0-only"
+fedora = "official"
+fedora_package = "lynis"
+binary = "lynis"
+version_args = ["--version"]
+also_in = ["detect"]
+
+[[tools]]
+id = "trivy"
+group = "vuln"
+name = "Trivy"
+purpose = "Scans container images and filesystems you own for known vulnerabilities."
+upstream = "https://github.com/aquasecurity/trivy"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "trivy"
+binary = "trivy"
+version_args = ["--version"]
+
+[[tools]]
+id = "grype"
+group = "vuln"
+name = "Grype"
+purpose = "Matches known vulnerabilities against a filesystem or image you own."
+upstream = "https://github.com/anchore/grype"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "grype"
+binary = "grype"
+version_args = ["--version"]
+
+[[tools]]
+id = "oscap"
+group = "vuln"
+name = "OpenSCAP"
+purpose = "Runs SCAP benchmarks against a system you administer."
+upstream = "https://www.open-scap.org/"
+license = "LGPL-2.1-or-later"
+fedora = "official"
+fedora_package = "openscap-scanner"
+binary = "oscap"
+version_args = ["--version"]
+also_in = ["detect"]
+
+[[tools]]
+id = "gvm"
+group = "vuln"
+name = "Greenbone Vulnerability Management"
+purpose = "Vulnerability-management stack for a lab network you are allowed to scan."
+upstream = "https://greenbone.github.io/docs/latest/"
+license = "GPL-2.0-or-later"
+license_note = "Component licenses differ; see Greenbone."
+fedora = "upstream"
+fedora_note = "No Fedora 44 gvm or openvas package. Greenbone documents its own containers and builds."
+binary = "gvmd"
+
+# --- wireless ---
+
+[[tools]]
+id = "aircrack-ng"
+group = "wireless"
+name = "Aircrack-ng"
+purpose = "802.11 capture and key-recovery suite for a lab network you are allowed to test."
+upstream = "https://www.aircrack-ng.org/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "aircrack-ng"
+binary = "aircrack-ng"
+version_args = ["--help"]
+also_in = ["top10"]
+
+[[tools]]
+id = "kismet"
+group = "wireless"
+name = "Kismet"
+purpose = "Wireless detector and sniffer for a radio you are allowed to use."
+upstream = "https://www.kismetwireless.net/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "kismet"
+binary = "kismet"
+
+[[tools]]
+id = "reaver"
+group = "wireless"
+name = "Reaver"
+purpose = "WPS testing tool for an access point you are allowed to test."
+upstream = "https://github.com/t6x/reaver-wps-fork-t6x"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "reaver"
+binary = "reaver"
+
+[[tools]]
+id = "pixiewps"
+group = "wireless"
+name = "Pixiewps"
+purpose = "Offline WPS PIN helper used with captures you are allowed to hold."
+upstream = "https://github.com/wiire-a/pixiewps"
+license = "GPL-3.0-only"
+fedora = "official"
+fedora_package = "pixiewps"
+binary = "pixiewps"
+version_args = ["--version"]
+
+[[tools]]
+id = "hcxtools"
+group = "wireless"
+name = "hcxtools"
+purpose = "Converts 802.11 captures you already have into hash files."
+upstream = "https://github.com/ZerBea/hcxtools"
+license = "MIT"
+fedora = "official"
+fedora_package = "hcxtools"
+binary = "hcxpcapngtool"
+version_args = ["--version"]
+
+[[tools]]
+id = "hcxdumptool"
+group = "wireless"
+name = "hcxdumptool"
+purpose = "Captures 802.11 frames on an adapter you are allowed to use."
+upstream = "https://github.com/ZerBea/hcxdumptool"
+license = "MIT"
+fedora = "copr"
+copr = "rebus/infosec"
+fedora_package = "hcxdumptool"
+fedora_note = "Not in Fedora 44. rebus/infosec had a succeeded fedora-44 build. That COPR is a large unofficial set; its own description says the packages are not ready for official Fedora."
+binary = "hcxdumptool"
+
+[[tools]]
+id = "cowpatty"
+group = "wireless"
+name = "cowpatty"
+purpose = "Tests a WPA capture you already have against a word list you supply."
+upstream = "https://github.com/joswr1ght/cowpatty"
+license = "GPL-2.0-only AND BSD-3-Clause"
+fedora = "official"
+fedora_package = "cowpatty"
+binary = "cowpatty"
+
+[[tools]]
+id = "iw"
+group = "wireless"
+name = "iw"
+purpose = "Configures a mac80211 wireless interface you administer."
+upstream = "https://wireless.wiki.kernel.org/en/users/documentation/iw"
+license = "ISC"
+fedora = "official"
+fedora_package = "iw"
+binary = "iw"
+version_args = ["--version"]
+
+[[tools]]
+id = "macchanger"
+group = "wireless"
+name = "macchanger"
+purpose = "Prints or sets the MAC address of an interface you administer."
+upstream = "https://github.com/alobbs/macchanger"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "macchanger"
+binary = "macchanger"
+version_args = ["--version"]
+
+[[tools]]
+id = "bettercap"
+group = "wireless"
+name = "bettercap"
+purpose = "Network and wireless assessment framework for a lab segment you are allowed to test."
+upstream = "https://www.bettercap.org/"
+license = "GPL-3.0-only"
+fedora = "upstream"
+fedora_note = "Retired in Fedora (orphaned). Not in the Fedora 44 compose."
+binary = "bettercap"
+also_in = ["sniff", "bluetooth"]
+
+# --- bluetooth ---
+
+[[tools]]
+id = "bluez"
+group = "bluetooth"
+name = "BlueZ"
+purpose = "Linux Bluetooth stack and the bluetoothctl client."
+upstream = "https://www.bluez.org/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "bluez"
+binary = "bluetoothctl"
+version_args = ["--version"]
+
+[[tools]]
+id = "ubertooth"
+group = "bluetooth"
+name = "Ubertooth"
+purpose = "Tools for an Ubertooth radio you own."
+upstream = "https://github.com/greatscottgadgets/ubertooth"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "ubertooth"
+binary = "ubertooth-util"
+
+[[tools]]
+id = "crackle"
+group = "bluetooth"
+name = "crackle"
+purpose = "Decrypts Bluetooth LE traffic from a capture you already have."
+upstream = "https://github.com/mikeryan/crackle"
+license = "BSD-2-Clause"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "crackle"
+
+# --- passwords ---
+
+[[tools]]
+id = "hashcat"
+group = "passwords"
+name = "hashcat"
+purpose = "Recovers passwords from hashes you already have and are allowed to test."
+upstream = "https://hashcat.net/hashcat/"
+license = "MIT"
+fedora = "official"
+fedora_package = "hashcat"
+fedora_note = "Also the practical GPU path. Whether the MacBookPro16,1 dGPU is the right OpenCL device is open; see docs/gap-analysis.md."
+binary = "hashcat"
+version_args = ["--version"]
+also_in = ["wireless"]
+
+[[tools]]
+id = "john"
+group = "passwords"
+name = "John the Ripper"
+purpose = "Recovers passwords from hashes you already have and are allowed to test."
+upstream = "https://www.openwall.com/john/"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "john"
+binary = "john"
+version_args = ["--list=build-info"]
+also_in = ["top10"]
+
+[[tools]]
+id = "hydra"
+group = "passwords"
+name = "Hydra"
+purpose = "Checks logins against a service you are authorized to test."
+upstream = "https://github.com/vanhauser-thc/thc-hydra"
+license = "AGPL-3.0-only"
+fedora = "official"
+fedora_package = "hydra"
+binary = "hydra"
+version_args = ["-h"]
+also_in = ["top10"]
+
+[[tools]]
+id = "ncrack"
+group = "passwords"
+name = "Ncrack"
+purpose = "Checks logins against a service you are authorized to test."
+upstream = "https://nmap.org/ncrack/"
+license = "GPL-2.0-only"
+license_note = "Fedora records additional exceptions on the GPL tag."
+fedora = "official"
+fedora_package = "ncrack"
+binary = "ncrack"
+
+[[tools]]
+id = "medusa"
+group = "passwords"
+name = "Medusa"
+purpose = "Checks logins against a service you are authorized to test."
+upstream = "https://github.com/jmk-foofus/medusa"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "medusa"
+binary = "medusa"
+
+[[tools]]
+id = "ophcrack"
+group = "passwords"
+name = "Ophcrack"
+purpose = "Tests Windows password hashes you already have against rainbow tables."
+upstream = "https://ophcrack.sourceforge.io/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "ophcrack"
+binary = "ophcrack"
+
+[[tools]]
+id = "pdfcrack"
+group = "passwords"
+name = "pdfcrack"
+purpose = "Recovers a password from a PDF you are allowed to open."
+upstream = "https://github.com/machine1337/pdfcrack"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "pdfcrack"
+binary = "pdfcrack"
+
+[[tools]]
+id = "chntpw"
+group = "passwords"
+name = "chntpw"
+purpose = "Edits a Windows SAM hive on a disk image you are allowed to modify."
+upstream = "https://pogostick.net/~pnh/ntpasswd/"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "chntpw"
+binary = "chntpw"
+
+[[tools]]
+id = "seclists"
+group = "passwords"
+name = "SecLists"
+purpose = "Wordlists and test-data collections used by other lab tools."
+upstream = "https://github.com/danielmiessler/SecLists"
+license = "MIT"
+fedora = "copr"
+copr = "r3pek/cybersec"
+fedora_package = "seclists"
+fedora_note = "Not in Fedora 44. COPR build for fedora-44-x86_64 had succeeded. The collection is large. This repo does not vendor the lists."
+binary = ""
+
+[[tools]]
+id = "hashid"
+group = "passwords"
+name = "hashID"
+purpose = "Guesses the type of a hash string you already have."
+upstream = "https://github.com/psypanda/hashID"
+license = "GPL-3.0-only"
+fedora = "upstream"
+fedora_note = "Retired in Fedora (orphaned). Not in the Fedora 44 compose."
+binary = "hashid"
+
+# --- exploitation ---
+
+[[tools]]
+id = "metasploit"
+group = "exploitation"
+name = "Metasploit Framework"
+purpose = "Framework of public exploit modules for authorized lab validation. This catalog does not list modules or payloads."
+upstream = "https://github.com/rapid7/metasploit-framework"
+license = "BSD-3-Clause"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. Use the upstream project rather than an unreviewed COPR."
+binary = "msfconsole"
+also_in = ["top10"]
+
+[[tools]]
+id = "exploitdb"
+group = "exploitation"
+name = "Exploit-DB"
+purpose = "Searchable archive of public exploit records. This repo does not copy the archive."
+upstream = "https://gitlab.com/exploit-database/exploitdb"
+license = "GPL-2.0-or-later"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. The searchsploit client comes from the upstream archive."
+binary = "searchsploit"
+
+# --- tunnels ---
+
+[[tools]]
+id = "proxychains-ng"
+group = "tunnels"
+name = "proxychains-ng"
+purpose = "Sends a program's TCP connections through a proxy you configured."
+upstream = "https://github.com/rofl0r/proxychains-ng"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "proxychains-ng"
+binary = "proxychains4"
+
+[[tools]]
+id = "socat"
+group = "tunnels"
+name = "socat"
+purpose = "Relays bytes between two local or remote streams you are allowed to use."
+upstream = "http://www.dest-unreach.org/socat/"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "socat"
+binary = "socat"
+version_args = ["-V"]
+
+[[tools]]
+id = "stunnel"
+group = "tunnels"
+name = "stunnel"
+purpose = "Wraps a stream in TLS for a service you administer."
+upstream = "https://www.stunnel.org/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "stunnel"
+binary = "stunnel"
+version_args = ["-version"]
+
+# --- social ---
+
+[[tools]]
+id = "set"
+group = "social"
+name = "Social-Engineer Toolkit"
+purpose = "Social-engineering exercise framework. Campaign steps are not documented here."
+upstream = "https://github.com/trustedsec/social-engineer-toolkit"
+license = "BSD-3-Clause"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "setoolkit"
+
+[[tools]]
+id = "beef"
+group = "social"
+name = "BeEF"
+purpose = "Browser-assessment framework for browsers you are allowed to test."
+upstream = "https://github.com/beefproject/beef"
+license = "Apache-2.0"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "beef"
+
+# --- sniff ---
+
+[[tools]]
+id = "tshark"
+group = "sniff"
+name = "tshark"
+purpose = "Captures and prints packets on an interface you are allowed to monitor."
+upstream = "https://www.wireshark.org/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "wireshark-cli"
+fedora_note = "The graphical analyzer is the separate wireshark package."
+binary = "tshark"
+version_args = ["--version"]
+also_in = ["top10", "forensics", "voip"]
+
+[[tools]]
+id = "tcpdump"
+group = "sniff"
+name = "tcpdump"
+purpose = "Captures packets on an interface you are allowed to monitor."
+upstream = "https://www.tcpdump.org/"
+license = "BSD-3-Clause"
+fedora = "official"
+fedora_package = "tcpdump"
+binary = "tcpdump"
+version_args = ["--version"]
+also_in = ["forensics"]
+
+[[tools]]
+id = "ngrep"
+group = "sniff"
+name = "ngrep"
+purpose = "Matches strings in packets on an interface you are allowed to monitor."
+upstream = "https://github.com/jpr5/ngrep"
+license = "BSD-3-Clause"
+fedora = "official"
+fedora_package = "ngrep"
+binary = "ngrep"
+
+[[tools]]
+id = "netsniff-ng"
+group = "sniff"
+name = "netsniff-ng"
+purpose = "Captures packets on an interface you are allowed to monitor."
+upstream = "http://netsniff-ng.org/"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "netsniff-ng"
+binary = "netsniff-ng"
+
+[[tools]]
+id = "ettercap"
+group = "sniff"
+name = "Ettercap"
+purpose = "Inspects traffic on a lab segment you are allowed to monitor."
+upstream = "https://www.ettercap-project.org/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "ettercap"
+binary = "ettercap"
+
+[[tools]]
+id = "dsniff"
+group = "sniff"
+name = "dsniff"
+purpose = "Parses cleartext protocol fields from traffic you are allowed to monitor."
+upstream = "https://www.monkey.org/~dugsong/dsniff/"
+license = "BSD-3-Clause"
+fedora = "official"
+fedora_package = "dsniff"
+binary = "dsniff"
+
+[[tools]]
+id = "scapy"
+group = "sniff"
+name = "Scapy"
+purpose = "Builds and reads packets in Python for a lab network you are allowed to use."
+upstream = "https://scapy.net/"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "python3-scapy"
+binary = "scapy"
+
+[[tools]]
+id = "tcpflow"
+group = "sniff"
+name = "tcpflow"
+purpose = "Reassembles TCP streams from a capture you already have."
+upstream = "https://github.com/simsong/tcpflow"
+license = "GPL-1.0-or-later"
+fedora = "official"
+fedora_package = "tcpflow"
+binary = "tcpflow"
+
+[[tools]]
+id = "tcpreplay"
+group = "sniff"
+name = "tcpreplay"
+purpose = "Replays a packet capture onto an interface you are allowed to use."
+upstream = "https://github.com/appneta/tcpreplay"
+license = "GPL-3.0-only"
+fedora = "official"
+fedora_package = "tcpreplay"
+binary = "tcpreplay"
+version_args = ["--version"]
+
+[[tools]]
+id = "responder"
+group = "sniff"
+name = "Responder"
+purpose = "Answers broadcast name queries on an isolated lab LAN."
+upstream = "https://github.com/lgandx/Responder"
+license = "GPL-3.0-only"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "responder"
+also_in = ["top10"]
+
+# --- database ---
+
+[[tools]]
+id = "sqlitebrowser"
+group = "database"
+name = "DB Browser for SQLite"
+purpose = "Opens SQLite files you are allowed to read."
+upstream = "https://sqlitebrowser.org/"
+license = "GPL-3.0-or-later OR MPL-2.0"
+fedora = "official"
+fedora_package = "sqlitebrowser"
+binary = "sqlitebrowser"
+
+[[tools]]
+id = "mdbtools"
+group = "database"
+name = "mdbtools"
+purpose = "Reads Microsoft Access files you are allowed to inspect."
+upstream = "https://github.com/mdbtools/mdbtools"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "mdbtools"
+binary = "mdb-tables"
+
+# --- forensics ---
+
+[[tools]]
+id = "sleuthkit"
+group = "forensics"
+name = "The Sleuth Kit"
+purpose = "Lists files and metadata in a disk image you are allowed to examine."
+upstream = "https://www.sleuthkit.org/"
+license = "CPL-1.0 AND GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "sleuthkit"
+binary = "fls"
+
+[[tools]]
+id = "binwalk"
+group = "forensics"
+name = "binwalk"
+purpose = "Identifies embedded files inside a firmware image you are allowed to inspect."
+upstream = "https://github.com/ReFirmLabs/binwalk"
+license = "MIT"
+fedora = "official"
+fedora_package = "binwalk"
+binary = "binwalk"
+version_args = ["--version"]
+also_in = ["reversing", "hardware"]
+
+[[tools]]
+id = "foremost"
+group = "forensics"
+name = "foremost"
+purpose = "Carves known file types out of a disk image you are allowed to examine."
+upstream = "https://github.com/korczis/foremost"
+license = "LicenseRef-Fedora-Public-Domain"
+fedora = "official"
+fedora_package = "foremost"
+binary = "foremost"
+
+[[tools]]
+id = "testdisk"
+group = "forensics"
+name = "TestDisk and PhotoRec"
+purpose = "Recovers partitions and files from media you are allowed to recover."
+upstream = "https://www.cgsecurity.org/wiki/TestDisk"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "testdisk"
+binary = "photorec"
+
+[[tools]]
+id = "dc3dd"
+group = "forensics"
+name = "dc3dd"
+purpose = "Copies a disk image with hashes, for media you are allowed to image."
+upstream = "https://sourceforge.net/projects/dc3dd/"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "dc3dd"
+binary = "dc3dd"
+version_args = ["--version"]
+
+[[tools]]
+id = "dcfldd"
+group = "forensics"
+name = "dcfldd"
+purpose = "Copies a disk image with hashes, for media you are allowed to image."
+upstream = "https://github.com/resurrecting-open-source-projects/dcfldd"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "dcfldd"
+binary = "dcfldd"
+
+[[tools]]
+id = "ddrescue"
+group = "forensics"
+name = "GNU ddrescue"
+purpose = "Copies a failing disk you are allowed to recover."
+upstream = "https://www.gnu.org/software/ddrescue/"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "ddrescue"
+binary = "ddrescue"
+version_args = ["--version"]
+
+[[tools]]
+id = "yara"
+group = "forensics"
+name = "YARA"
+purpose = "Matches patterns against files you are allowed to inspect."
+upstream = "https://virustotal.github.io/yara/"
+license = "BSD-3-Clause"
+fedora = "official"
+fedora_package = "yara"
+binary = "yara"
+version_args = ["--version"]
+also_in = ["detect"]
+
+[[tools]]
+id = "ssdeep"
+group = "forensics"
+name = "ssdeep"
+purpose = "Computes fuzzy hashes of files you are allowed to inspect."
+upstream = "https://ssdeep-project.github.io/ssdeep/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "ssdeep"
+binary = "ssdeep"
+version_args = ["--version"]
+
+[[tools]]
+id = "exiftool"
+group = "forensics"
+name = "ExifTool"
+purpose = "Reads and writes file metadata on files you are allowed to handle."
+upstream = "https://exiftool.org/"
+license = "GPL-1.0-or-later OR Artistic-1.0-Perl"
+fedora = "official"
+fedora_package = "perl-Image-ExifTool"
+binary = "exiftool"
+version_args = ["-ver"]
+also_in = ["reporting"]
+
+[[tools]]
+id = "chkrootkit"
+group = "forensics"
+name = "chkrootkit"
+purpose = "Looks for known rootkit traces on a host you administer."
+upstream = "https://www.chkrootkit.org/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "chkrootkit"
+binary = "chkrootkit"
+also_in = ["detect"]
+
+[[tools]]
+id = "rkhunter"
+group = "forensics"
+name = "rkhunter"
+purpose = "Looks for known rootkit traces on a host you administer."
+upstream = "https://sourceforge.net/projects/rkhunter/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "rkhunter"
+binary = "rkhunter"
+version_args = ["--version"]
+also_in = ["detect"]
+
+[[tools]]
+id = "autopsy"
+group = "forensics"
+name = "Autopsy"
+purpose = "Graphical case tool on top of The Sleuth Kit for images you are allowed to examine."
+upstream = "https://www.autopsy.com/"
+license = "Apache-2.0"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. Upstream publishes its own builds."
+binary = "autopsy"
+
+[[tools]]
+id = "volatility3"
+group = "forensics"
+name = "Volatility 3"
+purpose = "Inspects a memory image you are allowed to examine."
+upstream = "https://github.com/volatilityfoundation/volatility3"
+license = "Volatility-Software-License"
+license_note = "Custom license; see upstream. It is not an OSI license."
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. A rebus/infosec build of python-volatility3 had not succeeded for this release."
+binary = "vol"
+
+# --- reversing ---
+
+[[tools]]
+id = "radare2"
+group = "reversing"
+name = "radare2"
+purpose = "Disassembles and inspects a binary you are allowed to examine."
+upstream = "https://rada.re/"
+license = "LGPL-3.0-or-later"
+fedora = "official"
+fedora_package = "radare2"
+binary = "r2"
+version_args = ["-v"]
+also_in = ["hardware"]
+
+[[tools]]
+id = "iaito"
+group = "reversing"
+name = "iaito"
+purpose = "Graphical interface for radare2."
+upstream = "https://github.com/radareorg/iaito"
+license = "GPL-3.0-only"
+fedora = "official"
+fedora_package = "iaito"
+binary = "iaito"
+
+[[tools]]
+id = "rizin"
+group = "reversing"
+name = "Rizin"
+purpose = "Disassembles and inspects a binary you are allowed to examine."
+upstream = "https://rizin.re/"
+license = "LGPL-3.0-only"
+fedora = "official"
+fedora_package = "rizin"
+binary = "rizin"
+version_args = ["-v"]
+
+[[tools]]
+id = "gdb"
+group = "reversing"
+name = "GDB"
+purpose = "Debugs a process you are allowed to trace."
+upstream = "https://www.sourceware.org/gdb/"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "gdb"
+binary = "gdb"
+version_args = ["--version"]
+
+[[tools]]
+id = "checksec"
+group = "reversing"
+name = "checksec"
+purpose = "Prints exploit-mitigation flags on a binary you are allowed to inspect."
+upstream = "https://github.com/slimm609/checksec.sh"
+license = "BSD-2-Clause"
+fedora = "official"
+fedora_package = "checksec"
+binary = "checksec"
+version_args = ["--version"]
+
+[[tools]]
+id = "pwntools"
+group = "reversing"
+name = "pwntools"
+purpose = "Python helpers for binary exercises and CTF-style labs you are allowed to run."
+upstream = "https://github.com/Gallopsled/pwntools"
+license = "MIT"
+fedora = "official"
+fedora_package = "python3-pwntools"
+binary = "pwn"
+python_distribution = "pwntools"
+
+[[tools]]
+id = "upx"
+group = "reversing"
+name = "UPX"
+purpose = "Packs or unpacks an executable you are allowed to modify."
+upstream = "https://upx.github.io/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "upx"
+binary = "upx"
+version_args = ["--version"]
+
+[[tools]]
+id = "ghidra"
+group = "reversing"
+name = "Ghidra"
+purpose = "Disassembles and decompiles a binary you are allowed to examine."
+upstream = "https://github.com/NationalSecurityAgency/ghidra"
+license = "Apache-2.0"
+fedora = "copr"
+copr = "davidgf/ghidra"
+fedora_package = "ghidra"
+fedora_note = "Not in Fedora 44. COPR davidgf/ghidra had a succeeded build for fedora-44-x86_64."
+binary = "ghidra"
+
+[[tools]]
+id = "jadx"
+group = "reversing"
+name = "jadx"
+purpose = "Decompiles Android bytecode you are allowed to examine."
+upstream = "https://github.com/skylot/jadx"
+license = "Apache-2.0"
+fedora = "copr"
+copr = "r3pek/cybersec"
+fedora_package = "jadx"
+fedora_note = "COPR build for fedora-44-x86_64 had succeeded."
+binary = "jadx"
+
+# --- fuzzing ---
+
+[[tools]]
+id = "aflplusplus"
+group = "fuzzing"
+name = "AFL++"
+purpose = "Fuzzes a local program you built for the purpose."
+upstream = "https://github.com/AFLplusplus/AFLplusplus"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "american-fuzzy-lop"
+binary = "afl-fuzz"
+
+[[tools]]
+id = "zzuf"
+group = "fuzzing"
+name = "zzuf"
+purpose = "Corrupts a local program's input for a test you are running."
+upstream = "https://github.com/samhocevar/zzuf"
+license = "WTFPL"
+fedora = "official"
+fedora_package = "zzuf"
+binary = "zzuf"
+
+[[tools]]
+id = "honggfuzz"
+group = "fuzzing"
+name = "honggfuzz"
+purpose = "Fuzzes a local program you built for the purpose."
+upstream = "https://github.com/google/honggfuzz"
+license = "Apache-2.0"
+fedora = "upstream"
+fedora_note = "Retired in Fedora (orphaned). Not in the Fedora 44 compose."
+binary = "honggfuzz"
+
+# --- crypto ---
+
+[[tools]]
+id = "steghide"
+group = "crypto"
+name = "steghide"
+purpose = "Embeds or extracts a file inside an image you are allowed to modify."
+upstream = "https://github.com/StefanoDeVuono/steghide"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "steghide"
+binary = "steghide"
+version_args = ["--version"]
+
+[[tools]]
+id = "aeskeyfind"
+group = "crypto"
+name = "aeskeyfind"
+purpose = "Searches a memory image you are allowed to examine for AES key schedules."
+upstream = "https://github.com/makomk/aeskeyfind"
+license = "BSD-3-Clause"
+fedora = "official"
+fedora_package = "aeskeyfind"
+binary = "aeskeyfind"
+
+[[tools]]
+id = "ccrypt"
+group = "crypto"
+name = "ccrypt"
+purpose = "Encrypts files with a passphrase you choose."
+upstream = "http://ccrypt.sourceforge.net/"
+license = "GPL-2.0-only"
+fedora = "upstream"
+fedora_note = "Retired in Fedora for a long-term build failure. Not in the Fedora 44 compose."
+binary = "ccrypt"
+
+# --- sdr ---
+
+[[tools]]
+id = "gnuradio"
+group = "sdr"
+name = "GNU Radio"
+purpose = "Signal-processing framework for a radio you own."
+upstream = "https://www.gnuradio.org/"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "gnuradio"
+binary = "gnuradio-config-info"
+version_args = ["--version"]
+
+[[tools]]
+id = "gqrx"
+group = "sdr"
+name = "Gqrx"
+purpose = "Graphical receiver for a software radio you own."
+upstream = "https://gqrx.dk/"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "gqrx"
+binary = "gqrx"
+
+[[tools]]
+id = "hackrf"
+group = "sdr"
+name = "HackRF tools"
+purpose = "Utilities for a HackRF radio you own."
+upstream = "https://greatscottgadgets.com/hackrf/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "hackrf"
+binary = "hackrf_info"
+
+[[tools]]
+id = "rtl-sdr"
+group = "sdr"
+name = "rtl-sdr"
+purpose = "Utilities for a Realtek RTL2832 radio you own."
+upstream = "https://osmocom.org/projects/rtl-sdr/wiki"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "rtl-sdr"
+binary = "rtl_test"
+
+[[tools]]
+id = "urh"
+group = "sdr"
+name = "Universal Radio Hacker"
+purpose = "Inspects unknown wireless protocols from a radio or capture you own."
+upstream = "https://github.com/jopohl/urh"
+license = "GPL-3.0-only"
+fedora = "official"
+fedora_package = "urh"
+binary = "urh"
+
+[[tools]]
+id = "inspectrum"
+group = "sdr"
+name = "inspectrum"
+purpose = "Plots a recorded radio signal you already have."
+upstream = "https://github.com/miek/inspectrum"
+license = "GPL-3.0-only"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "inspectrum"
+
+# --- rfid ---
+
+[[tools]]
+id = "proxmark3"
+group = "rfid"
+name = "Proxmark3"
+purpose = "Client for a Proxmark RFID board you own."
+upstream = "https://github.com/RfidResearchGroup/proxmark3"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "proxmark3"
+binary = "proxmark3"
+
+[[tools]]
+id = "rfdump"
+group = "rfid"
+name = "rfdump"
+purpose = "Reads RFID tag contents from a capture or reader you are allowed to use."
+upstream = "https://www.kali.org/tools/rfdump/"
+license = "GPL-2.0-or-later"
+fedora = "upstream"
+fedora_note = "Retired in Fedora (orphaned). Not in the Fedora 44 compose. The link is the Kali tool page because the original project site has moved."
+binary = "rfdump"
+
+# --- voip ---
+
+[[tools]]
+id = "sipp"
+group = "voip"
+name = "SIPp"
+purpose = "Generates SIP traffic against a server you are allowed to test."
+upstream = "https://github.com/SIPp/sipp"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "sipp"
+binary = "sipp"
+
+[[tools]]
+id = "sipsak"
+group = "voip"
+name = "sipsak"
+purpose = "Sends SIP messages to a server you are allowed to test."
+upstream = "https://github.com/nils-ohlmeier/sipsak"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "sipsak"
+binary = "sipsak"
+
+[[tools]]
+id = "sipvicious"
+group = "voip"
+name = "SIPVicious"
+purpose = "SIP test tools for a server you are allowed to test."
+upstream = "https://github.com/EnableSecurity/sipvicious"
+license = "GPL-3.0-only"
+fedora = "upstream"
+fedora_note = "Retired in Fedora (orphaned). Not in the Fedora 44 compose."
+binary = "svmap"
+
+# --- detect ---
+
+[[tools]]
+id = "clamav"
+group = "detect"
+name = "ClamAV"
+purpose = "Scans files you trust it to read for known malware signatures."
+upstream = "https://www.clamav.net/"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "clamav"
+binary = "clamscan"
+version_args = ["--version"]
+
+[[tools]]
+id = "suricata"
+group = "detect"
+name = "Suricata"
+purpose = "Network intrusion detection on a segment you are allowed to monitor."
+upstream = "https://suricata.io/"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "suricata"
+binary = "suricata"
+version_args = ["-V"]
+
+[[tools]]
+id = "aide"
+group = "detect"
+name = "AIDE"
+purpose = "Records and checks file integrity on a host you administer."
+upstream = "https://aide.github.io/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "aide"
+binary = "aide"
+version_args = ["--version"]
+
+[[tools]]
+id = "fail2ban"
+group = "detect"
+name = "Fail2ban"
+purpose = "Bans remote addresses that repeatedly fail authentication on a host you administer."
+upstream = "https://github.com/fail2ban/fail2ban"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "fail2ban"
+fedora_note = "The client binary is in the fail2ban-server subpackage."
+binary = "fail2ban-client"
+version_args = ["--version"]
+
+[[tools]]
+id = "gitleaks"
+group = "detect"
+name = "gitleaks"
+purpose = "Looks for secrets in a git tree you are allowed to scan."
+upstream = "https://github.com/gitleaks/gitleaks"
+license = "MIT"
+fedora = "official"
+fedora_package = "gitleaks"
+binary = "gitleaks"
+
+[[tools]]
+id = "zeek"
+group = "detect"
+name = "Zeek"
+purpose = "Network security monitor for traffic you are allowed to record."
+upstream = "https://zeek.org/"
+license = "BSD-3-Clause"
+fedora = "upstream"
+fedora_note = "Retired in Fedora after a build failure. Not in the Fedora 44 compose."
+binary = "zeek"
+
+[[tools]]
+id = "snort"
+group = "detect"
+name = "Snort"
+purpose = "Network intrusion detection on a segment you are allowed to monitor."
+upstream = "https://www.snort.org/"
+license = "GPL-2.0-only"
+fedora = "upstream"
+fedora_note = "Retired in Fedora. Not in the Fedora 44 compose."
+binary = "snort"
+
+# --- reporting ---
+
+[[tools]]
+id = "flameshot"
+group = "reporting"
+name = "Flameshot"
+purpose = "Takes annotated screenshots for notes you are writing."
+upstream = "https://flameshot.org/"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "flameshot"
+binary = "flameshot"
+
+[[tools]]
+id = "obs-studio"
+group = "reporting"
+name = "OBS Studio"
+purpose = "Records a screen or window for a lab procedure you are documenting."
+upstream = "https://obsproject.com/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "obs-studio"
+binary = "obs"
+
+[[tools]]
+id = "ghostwriter-editor"
+group = "reporting"
+name = "ghostwriter (Markdown editor)"
+purpose = "Distraction-free Markdown editor shipped by Fedora. This is not SpecterOps Ghostwriter."
+upstream = "https://github.com/ghostwriter-org/ghostwriter"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "ghostwriter"
+binary = "ghostwriter"
+
+[[tools]]
+id = "faraday"
+group = "reporting"
+name = "Faraday"
+purpose = "Collaborative lab notebook for findings you already recorded."
+upstream = "https://github.com/infobyte/faraday"
+license = "GPL-3.0-only"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "faraday"
+
+[[tools]]
+id = "dradis"
+group = "reporting"
+name = "Dradis Community"
+purpose = "Self-hosted report platform for findings you already recorded."
+upstream = "https://github.com/dradis/dradis-ce"
+license = "GPL-2.0-only"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "dradis"
+
+[[tools]]
+id = "eyewitness"
+group = "reporting"
+name = "EyeWitness"
+purpose = "Saves screenshots of web pages you are allowed to request, for a report."
+upstream = "https://github.com/FortyNorthSecurity/EyeWitness"
+license = "GPL-3.0-only"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "eyewitness"
+
+[[tools]]
+id = "maltego"
+group = "reporting"
+name = "Maltego"
+purpose = "Commercial graph tool for link analysis of data you are allowed to collect."
+upstream = "https://www.maltego.com/"
+license = "proprietary"
+fedora = "upstream"
+fedora_note = "No Fedora package."
+binary = "maltego"
+
+# --- lab ---
+
+[[tools]]
+id = "podman"
+group = "lab"
+name = "Podman"
+purpose = "Runs OCI containers for an isolated lab service."
+upstream = "https://podman.io/"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "podman"
+binary = "podman"
+version_args = ["--version"]
+
+[[tools]]
+id = "buildah"
+group = "lab"
+name = "Buildah"
+purpose = "Builds OCI images for a lab container."
+upstream = "https://buildah.io/"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "buildah"
+binary = "buildah"
+version_args = ["--version"]
+
+[[tools]]
+id = "skopeo"
+group = "lab"
+name = "Skopeo"
+purpose = "Inspects and copies container images you are allowed to fetch."
+upstream = "https://github.com/containers/skopeo"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "skopeo"
+binary = "skopeo"
+version_args = ["--version"]
+
+[[tools]]
+id = "virt-manager"
+group = "lab"
+name = "Virtual Machine Manager"
+purpose = "Graphical libvirt client for virtual machines on a host you administer."
+upstream = "https://virt-manager.org/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "virt-manager"
+binary = "virt-manager"
+
+[[tools]]
+id = "virsh"
+group = "lab"
+name = "virsh"
+purpose = "Command-line libvirt client for virtual machines on a host you administer."
+upstream = "https://libvirt.org/"
+license = "LGPL-2.1-or-later"
+fedora = "official"
+fedora_package = "libvirt-client"
+binary = "virsh"
+version_args = ["--version"]
+
+[[tools]]
+id = "qemu-system-x86"
+group = "lab"
+name = "QEMU (x86)"
+purpose = "Emulates a PC for a lab guest on a machine you administer."
+upstream = "https://www.qemu.org/"
+license = "GPL-2.0-only AND LGPL-2.1-or-later"
+fedora = "official"
+fedora_package = "qemu-system-x86"
+binary = "qemu-system-x86_64"
+version_args = ["--version"]
+also_in = ["hardware"]
+
+[[tools]]
+id = "vagrant"
+group = "lab"
+name = "Vagrant"
+purpose = "Builds repeatable virtual-machine environments from a Vagrantfile you wrote."
+upstream = "https://developer.hashicorp.com/vagrant"
+license = "MIT"
+license_note = "Fedora 44 ships 2.3.4, whose package license tag is MIT. Newer upstream releases use a different license."
+fedora = "official"
+fedora_package = "vagrant"
+binary = "vagrant"
+version_args = ["--version"]
+
+[[tools]]
+id = "ansible"
+group = "lab"
+name = "Ansible"
+purpose = "Configures lab hosts you administer from a playbook."
+upstream = "https://www.ansible.com/"
+license = "GPL-3.0-or-later"
+fedora = "official"
+fedora_package = "ansible-core"
+fedora_note = "ansible-core provides the ansible command. The ansible package is a collection bundle."
+binary = "ansible"
+version_args = ["--version"]
+
+[[tools]]
+id = "remmina"
+group = "lab"
+name = "Remmina"
+purpose = "Graphical client for a remote desktop you are allowed to open."
+upstream = "https://remmina.org/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "remmina"
+binary = "remmina"
+
+[[tools]]
+id = "freerdp"
+group = "lab"
+name = "FreeRDP"
+purpose = "RDP client for a Windows or lab host you are allowed to open."
+upstream = "https://www.freerdp.com/"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "freerdp"
+binary = "xfreerdp"
+version_args = ["--version"]
+
+# --- hardware ---
+
+[[tools]]
+id = "flashrom"
+group = "hardware"
+name = "flashrom"
+purpose = "Reads or writes a SPI flash chip on a bench device you own."
+upstream = "https://www.flashrom.org/"
+license = "GPL-2.0-only"
+fedora = "official"
+fedora_package = "flashrom"
+binary = "flashrom"
+version_args = ["--version"]
+
+[[tools]]
+id = "minicom"
+group = "hardware"
+name = "minicom"
+purpose = "Opens a serial console on a port you are allowed to use."
+upstream = "https://salsa.debian.org/minicom-team/minicom"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "minicom"
+binary = "minicom"
+version_args = ["--version"]
+
+[[tools]]
+id = "openocd"
+group = "hardware"
+name = "OpenOCD"
+purpose = "On-chip debug for a board you own."
+upstream = "https://openocd.org/"
+license = "GPL-2.0-or-later"
+fedora = "official"
+fedora_package = "openocd"
+binary = "openocd"
+version_args = ["--version"]
+
+# --- ai ---
+
+[[tools]]
+id = "ollama"
+group = "ai"
+name = "Ollama"
+purpose = "Runs local language models on the machine, for notes and drafting."
+upstream = "https://ollama.com/"
+license = "MIT"
+license_note = "The Fedora spec also lists licenses of bundled libraries."
+fedora = "official"
+fedora_package = "ollama"
+binary = "ollama"
+version_args = ["--version"]
+
+[[tools]]
+id = "llama-cpp"
+group = "ai"
+name = "llama.cpp"
+purpose = "Runs a local GGUF model from the command line, without a daemon."
+upstream = "https://github.com/ggml-org/llama.cpp"
+license = "MIT"
+fedora = "official"
+fedora_package = "llama-cpp"
+binary = "llama-cli"
+version_args = ["--version"]
+
+[[tools]]
+id = "open-webui"
+group = "ai"
+name = "Open WebUI"
+purpose = "Browser UI in front of a local Ollama-class runner, for chat with models you already host."
+upstream = "https://github.com/open-webui/open-webui"
+license = "BSD-3-Clause"
+license_note = "Upstream adds a branding clause; read the LICENSE file."
+fedora = "upstream"
+fedora_note = "No Fedora 44 package. Upstream documents a container image."
+binary = "open-webui"
+
+[[tools]]
+id = "sysreptor"
+group = "ai"
+name = "SysReptor"
+purpose = "Self-hosted pentest report platform for findings you already wrote."
+upstream = "https://github.com/Syslifters/sysreptor"
+license = "see upstream LICENSE"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "sysreptor"
+
+[[tools]]
+id = "pwndoc"
+group = "ai"
+name = "Pwndoc"
+purpose = "Self-hosted report writer for findings you already wrote."
+upstream = "https://github.com/pwndoc/pwndoc"
+license = "MIT"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "pwndoc"
+
+[[tools]]
+id = "specterops-ghostwriter"
+group = "ai"
+name = "SpecterOps Ghostwriter"
+purpose = "Self-hosted report and finding tracker. Not the Fedora Markdown editor named ghostwriter."
+upstream = "https://github.com/GhostManager/Ghostwriter"
+license = "BSD-3-Clause"
+fedora = "upstream"
+fedora_note = "No Fedora 44 package."
+binary = "ghostwriter-server"
+also_in = ["reporting"]

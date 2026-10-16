@@ -7,6 +7,7 @@ Changes need evidence. A device id plus command output, or a quote from `scripts
 - Scanner checks that stay read-only.
 - Documentation of a gap, with the upstream project that should own it.
 - A small patch written so it can be sent upstream, when this repo is the right place to draft it.
+- The offensive-lab catalog (`catalog/tools.toml`), its docs under `docs/offensive/`, and the read-only Python and Rust checkers. New code there is Python or Rust.
 
 ## Out of bounds
 
@@ -16,6 +17,8 @@ Changes need evidence. A device id plus command output, or a quote from `scripts
 - Secure Enclave bypasses, biometric-template extraction, and firmware-signature bypasses.
 - Vendored copies of t2linux, tiny-dfr, t2bce, or t2-touchid.
 - Kernel modules until `docs/gap-analysis.md` names this repo as the home and the license header is GPL-2.0-or-later.
+- Exploit writeups, payloads, attack procedures, malware, and credential-theft steps. The lab catalog names tools. It does not teach those steps.
+- Vendored wordlists.
 
 ## Git
 

@@ -1,6 +1,8 @@
 # Roadmap
 
-Phase 0 is this commit: a local repo, a sanitized scan of the reference MacBookPro16,1, a ranked gap list, Cursor project rules, and a read-only scanner. Driver implementation is not in this commit.
+Phase 0 is a local repo, a sanitized scan of the reference MacBookPro16,1, a ranked gap list, Cursor project rules, and a read-only scanner. Driver implementation is not in this roadmap.
+
+A separate userspace track, the Fedora offensive-lab catalog, lives under `catalog/`, `python/`, `rust/t2offsec-inventory/`, and `docs/offensive/`. It does not close the gaps below and it does not add a kernel module. Start at `docs/index.md`.
 
 ## Phase 1 — Make the scan worth filing upstream
 

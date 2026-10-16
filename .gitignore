@@ -5,3 +5,9 @@ scan-out/
 *.hcd
 *serial*
 *uuid*
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+rust/t2offsec-inventory/target/
