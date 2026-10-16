@@ -53,6 +53,6 @@ Open `t2refit.code-workspace` in Cursor. Project rules live in `.cursor/rules/` 
 docs/hardware-scan.md       What this MacBookPro16,1 did on 2026-10-06
 docs/gap-analysis.md        Ranked gaps and who should own them
 docs/roadmap.md             Phases after this scaffold
-docs/userspace-software.md  Approved dnf and Flathub packages for this Mac
+docs/userspace-software.md  Approved userspace packages for this Mac
 scripts/scan-t2-host.sh     Read-only scanner
 ```
