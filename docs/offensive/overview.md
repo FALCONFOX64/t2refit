@@ -27,4 +27,4 @@ Both commands are read-only. They do not install packages, edit `/etc`, load mod
 - Firmware, DSP coefficients, or a Secure Enclave bypass.
 - An autonomous attack agent.
 
-Start with [install](install.md) if you are about to add packages on Fedora, [lab](lab.md) if you want a local range, or [the catalog](catalog.md) if you only want the map.
+Start with the [user manual](manual.md) for the `raccoonix-t2` package. Then [install](install.md) if you are about to add tool groups on Fedora, [lab](lab.md) if you want a local range, or [the catalog](catalog.md) if you only want the map. The short release note is [release-notes.md](release-notes.md).

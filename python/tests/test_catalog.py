@@ -10,10 +10,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from t2offsec.catalog import find_catalog, load_catalog
+from t2offsec.catalog import (
+    INSTALLED_CATALOG,
+    PACKAGE_NAME,
+    find_catalog,
+    load_catalog,
+)
 from t2offsec.cli import main
 from t2offsec.presence import check_tools, find_binary
-from t2offsec.render import render_markdown
+from t2offsec.render import help_command, render_manual, render_markdown
 
 ROOT = Path(__file__).resolve().parents[2]
 KALI_TOOLS = {
@@ -88,6 +93,35 @@ class CatalogTests(unittest.TestCase):
         path = ROOT / "docs" / "offensive" / "catalog.md"
         self.assertTrue(path.is_file(), "docs/offensive/catalog.md is missing")
         self.assertEqual(path.read_text(encoding="utf-8"), rendered)
+
+    def test_generated_manual_matches(self):
+        rendered = render_manual(self.catalog)
+        path = ROOT / "docs" / "offensive" / "manual.md"
+        self.assertTrue(path.is_file(), "docs/offensive/manual.md is missing")
+        self.assertEqual(path.read_text(encoding="utf-8"), rendered)
+        self.assertIn(PACKAGE_NAME, rendered)
+        self.assertIn("nmap --help", rendered)
+        self.assertIn("pydoc impacket", rendered)
+        for tool in self.catalog.tools:
+            self.assertIn(tool.name, rendered)
+            self.assertIn(tool.license, rendered)
+            self.assertIn(tool.upstream, rendered)
+            command = help_command(tool)
+            if command:
+                self.assertIn(command, rendered)
+        notice = (ROOT / "NOTICE").read_text(encoding="utf-8")
+        release = (ROOT / "docs" / "offensive" / "release-notes.md").read_text(encoding="utf-8")
+        spec = (ROOT / "packaging" / f"{PACKAGE_NAME}.spec").read_text(encoding="utf-8")
+        for text in (rendered, notice, release, spec):
+            lowered = text.lower()
+            for banned in ("terminator", "skynet", "cyberdyne"):
+                self.assertNotIn(banned, lowered)
+            self.assertIn(PACKAGE_NAME, text)
+        self.assertIn(str(INSTALLED_CATALOG), spec)
+        self.assertEqual(
+            str(INSTALLED_CATALOG),
+            f"/usr/share/{PACKAGE_NAME}/catalog/tools.toml",
+        )
 
     def test_no_procedure_snippets(self):
         blobs = [(ROOT / "catalog" / "tools.toml").read_text(encoding="utf-8").lower()]

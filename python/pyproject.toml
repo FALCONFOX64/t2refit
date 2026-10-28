@@ -1,7 +1,7 @@
 [project]
 name = "t2offsec"
 version = "0.1.0"
-description = "Read-only catalog browser for the t2refit Fedora offensive lab workspace"
+description = "Read-only catalog browser shipped as the raccoonix-t2 Fedora package"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 authors = [{ name = "t2refit contributors" }]

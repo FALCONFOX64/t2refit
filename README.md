@@ -34,7 +34,7 @@ The script is read-only. It does not use sudo and it does not use the network. I
 
 Read [docs/index.md](docs/index.md). Hardware notes, the approved desktop list, and the lab catalog are separate.
 
-If you want the lab map, open [docs/offensive/overview.md](docs/offensive/overview.md) and then the [catalog](docs/offensive/catalog.md). From a checkout, list groups without installing anything:
+If you want the lab, start with the [raccoonix T2 user manual](docs/offensive/manual.md). The Fedora package name is `raccoonix-t2`. The map of tools is the [catalog](docs/offensive/catalog.md), and [overview](docs/offensive/overview.md) says how that track sits beside the hardware tree. From a checkout, list groups without installing anything:
 
 ```bash
 PYTHONPATH=python/src python3 -m t2offsec groups
@@ -46,7 +46,7 @@ Install steps for Fedora are in [docs/offensive/install.md](docs/offensive/insta
 
 | Path | License |
 | --- | --- |
-| Documentation, `scripts/`, `catalog/`, `python/`, `rust/`, and future userspace | Apache-2.0 (`LICENSE-Apache-2.0`) |
+| Documentation, `scripts/`, `catalog/`, `python/`, `rust/`, `packaging/`, and future userspace | Apache-2.0 (`LICENSE-Apache-2.0`, notices in `NOTICE`) |
 | Future kernel modules, when any exist | GPL-2.0-or-later (`LICENSE-GPL-2.0-or-later`) |
 
 Kernel code uses GPL-2.0-or-later so it can be proposed upstream. There is no kernel code in this commit.
@@ -67,7 +67,9 @@ docs/hardware-scan.md             What this MacBookPro16,1 did on 2026-10-06
 docs/gap-analysis.md              Ranked gaps and who should own them
 docs/roadmap.md                   Hardware phases after the scaffold
 docs/userspace-software.md        Approved userspace packages for this Mac
+docs/offensive/manual.md          raccoonix T2 user manual (`raccoonix-t2`)
 docs/offensive/                   Fedora lab catalog, install, and smoke test
+packaging/raccoonix-t2.spec     RPM metadata for the public package
 catalog/tools.toml                Tool groups, Fedora path, license
 python/                           Read-only `t2offsec` CLI
 rust/t2offsec-inventory/          Read-only install and version inventory

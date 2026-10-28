@@ -1,0 +1,39 @@
+raccoonix-t2
+Copyright t2refit contributors
+
+This package is the raccoonix T2 lab catalog, its user manual, and the
+read-only t2offsec checker from the t2refit repository
+(https://github.com/FALCONFOX64/t2refit).
+
+Licensed under the Apache License, Version 2.0 (the "License").
+You may obtain a copy of the License in the file LICENSE-Apache-2.0
+or at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Third-party tools
+-----------------
+
+raccoonix-t2 names third-party lab tools. It does not include their
+source, wordlists, firmware, DSP coefficient files, or proprietary blobs.
+Each tool remains under the license recorded in docs/offensive/manual.md,
+at the upstream URL in that entry.
+
+Impacket is a modified Apache-2.0 project. Its NOTICE lives upstream at
+https://github.com/fortra/impacket . This package does not copy that
+NOTICE, because it does not distribute Impacket.
+
+Other upstream notices, modified grants, and non-OSI licenses are listed
+in the "License and third-party notices" section of the manual. Fedora,
+COPR, and upstream packages installed separately are separate works.
+Their licenses stay with those packages.
+
+Redistributors of raccoonix-t2 keep this NOTICE and LICENSE-Apache-2.0
+with the distribution. That is the attribution requirement in Apache-2.0
+section 4.

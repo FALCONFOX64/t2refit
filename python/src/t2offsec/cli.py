@@ -11,7 +11,7 @@ import sys
 from t2offsec import __version__
 from t2offsec.catalog import find_catalog, load_catalog
 from t2offsec.presence import check_tools
-from t2offsec.render import render_markdown
+from t2offsec.render import render_manual, render_markdown
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -50,6 +50,7 @@ def _parser() -> argparse.ArgumentParser:
 
     sub.add_parser("gaps", help="list tools with no official Fedora package")
     sub.add_parser("catalog", help="print the Markdown catalog")
+    sub.add_parser("manual", help="print the raccoonix-t2 user manual")
     return parser
 
 
@@ -75,6 +76,9 @@ def main(argv: list[str] | None = None) -> int:
             return _gaps(catalog)
         if args.command == "catalog":
             sys.stdout.write(render_markdown(catalog))
+            return 0
+        if args.command == "manual":
+            sys.stdout.write(render_manual(catalog))
             return 0
     except KeyError as exc:
         print(f"t2offsec: {exc}", file=sys.stderr)
