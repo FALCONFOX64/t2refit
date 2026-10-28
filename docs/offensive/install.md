@@ -1,5 +1,7 @@
 # Install tool groups on Fedora
 
+The package that carries the catalog itself is `raccoonix-t2`. Its install steps, and one entry for every tool, are in the [user manual](manual.md). This page is the next step: adding a group of lab tools on a Fedora machine you administer.
+
 Package names below come from `catalog/tools.toml`. Fedora 44 repository membership was read from mdapi on 2026-10-16 (observed via that public index, not by installing on the MacBookPro16,1). Re-check a name before you rely on it months later.
 
 Do this on a Fedora machine you administer. The commands change that machine. They are not part of a contribution, and they are not part of the cloud-agent smoke test.

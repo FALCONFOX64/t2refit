@@ -11,6 +11,10 @@ from pathlib import Path
 
 FEDORA_KINDS = frozenset({"official", "copr", "upstream"})
 ID_OK = set("abcdefghijklmnopqrstuvwxyz0123456789-")
+# Fedora RPM name for this lab catalog. Lowercase and hyphenated.
+PACKAGE_NAME = "raccoonix-t2"
+PACKAGE_DISPLAY = "raccoonix T2"
+INSTALLED_CATALOG = Path("/usr/share") / PACKAGE_NAME / "catalog" / "tools.toml"
 
 
 @dataclass(frozen=True)
@@ -107,8 +111,11 @@ def find_catalog(explicit: str | None = None) -> Path:
             path = candidate / "catalog" / "tools.toml"
             if path.is_file():
                 return path
+    if INSTALLED_CATALOG.is_file():
+        return INSTALLED_CATALOG
     raise FileNotFoundError(
-        "catalog/tools.toml not found; run from the t2refit repo or set T2OFFSEC_CATALOG"
+        "catalog/tools.toml not found; run from the t2refit repo, install "
+        f"{PACKAGE_NAME}, or set T2OFFSEC_CATALOG"
     )
 
 
