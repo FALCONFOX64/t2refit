@@ -68,7 +68,7 @@ Intel Macs with an Apple T2 chip, roughly 2018–2020, running Fedora. The refer
 PYTHONPATH=python/src python3 -m t2offsec groups
 ```
 
-3. Package instructions for `raccoonix-t2` itself are in the manual and in `packaging/raccoonix-t2.spec`. Adding a group of lab tools on a Fedora machine you administer is [install.md](docs/offensive/install.md). A local lab is [lab.md](docs/offensive/lab.md).
+3. Build the RPM locally. No public package repository exists yet. The manual's `git archive` and `rpmbuild` steps produce `t2refit-0.1.0.tar.gz`, which unpacks as `t2refit-0.1.0`. Adding a group of lab tools that Fedora already ships is [install.md](docs/offensive/install.md). A local lab is [lab.md](docs/offensive/lab.md).
 
 ### Tool groups
 
@@ -101,7 +101,9 @@ Use raccoonix-t2 on machines, networks, and files you are allowed to test.
 
 raccoonix-t2 is open source under Apache-2.0. Documentation, the catalog, and the checkers use that license (`LICENSE-Apache-2.0`). Third-party tools keep the licenses recorded in the manual and in `NOTICE`. Future kernel code, if this repo ever holds any, would be GPL-2.0-or-later. This track has no kernel code.
 
-Contributors of every experience level are welcome. A catalog correction, a clearer sentence, and a careful test note all help. Read [CONTRIBUTING.md](CONTRIBUTING.md) before you open a pull request.
+raccoonix-t2 is an independent project. It is not the Fedora Project, Apple, Kali or Offensive Security, or the upstream author of a catalogued tool. Those names identify the other projects.
+
+Contributors of every experience level are welcome. A catalog correction, a clearer sentence, and a careful test note all help. Read [CONTRIBUTING.md](CONTRIBUTING.md) before you open a pull request. Report a vulnerability the way [SECURITY.md](SECURITY.md) describes.
 
 - Manual: [docs/offensive/manual.md](docs/offensive/manual.md)
 - Release note: [docs/offensive/release-notes.md](docs/offensive/release-notes.md)

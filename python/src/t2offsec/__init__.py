@@ -2,4 +2,6 @@
 
 """Read-only browser for the t2refit offensive-lab catalog."""
 
-__version__ = "0.1.0"
+from t2offsec.catalog import PACKAGE_VERSION
+
+__version__ = PACKAGE_VERSION

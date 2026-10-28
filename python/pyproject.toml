@@ -10,7 +10,7 @@ authors = [{ name = "t2refit contributors" }]
 t2offsec = "t2offsec.cli:main"
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]

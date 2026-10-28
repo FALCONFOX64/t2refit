@@ -11,7 +11,7 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from t2offsec.catalog import Tool
+from t2offsec.catalog import Tool, valid_command_name
 
 _DIST_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,80}$")
 _EXTRA_DIRS = ("/usr/bin", "/usr/sbin", "/bin", "/sbin")
@@ -30,7 +30,7 @@ class Presence:
 
 
 def find_binary(name: str, path_env: str | None = None) -> str:
-    if not name:
+    if not valid_command_name(name):
         return ""
     raw = os.environ.get("PATH", "") if path_env is None else path_env
     directories = [item for item in raw.split(os.pathsep) if item]
@@ -38,10 +38,23 @@ def find_binary(name: str, path_env: str | None = None) -> str:
         if extra not in directories:
             directories.append(extra)
     for directory in directories:
-        candidate = Path(directory) / name
+        root = Path(directory)
+        candidate = root / name
+        # A name with a separator would escape `root`. valid_command_name
+        # already rejects those; this is the second check.
+        if candidate.parent != root:
+            continue
         if candidate.is_file() and os.access(candidate, os.X_OK):
             return str(candidate)
     return ""
+
+
+def rpm_argv(packages: list[str]) -> list[str]:
+    """rpm -q arguments. Invalid names are dropped. `--` ends rpm's flags."""
+    names = sorted({package for package in packages if valid_command_name(package)})
+    if not names:
+        return []
+    return ["rpm", "-q", "--qf", "%{NAME}\\t%{VERSION}-%{RELEASE}\\n", "--", *names]
 
 
 def rpm_versions(packages: list[str]) -> dict[str, str] | None:
@@ -49,17 +62,21 @@ def rpm_versions(packages: list[str]) -> dict[str, str] | None:
 
     Missing packages are omitted. The query is read-only.
     """
-    names = sorted({package for package in packages if package})
-    if not names:
+    argv = rpm_argv(packages)
+    if not argv:
         return {}
     if shutil.which("rpm") is None:
         return None
-    completed = subprocess.run(
-        ["rpm", "-q", "--qf", "%{NAME}\\t%{VERSION}-%{RELEASE}\\n", *names],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
+    try:
+        completed = subprocess.run(
+            argv,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
     found: dict[str, str] = {}
     for line in completed.stdout.splitlines():
         package, sep, version = line.partition("\t")

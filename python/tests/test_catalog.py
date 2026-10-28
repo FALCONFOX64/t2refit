@@ -10,14 +10,17 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from t2offsec import __version__
 from t2offsec.catalog import (
     INSTALLED_CATALOG,
     PACKAGE_NAME,
+    PACKAGE_VERSION,
     find_catalog,
     load_catalog,
+    valid_command_name,
 )
 from t2offsec.cli import main
-from t2offsec.presence import check_tools, find_binary
+from t2offsec.presence import check_tools, find_binary, rpm_argv
 from t2offsec.render import help_command, render_manual, render_markdown
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -174,6 +177,120 @@ class CatalogTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             (Path(tmp) / "nmap").mkdir()
             self.assertEqual(find_binary("nmap", tmp), "")
+
+    def test_hostile_names_are_rejected(self):
+        self.assertFalse(valid_command_name("../nmap"))
+        self.assertFalse(valid_command_name("a/b"))
+        self.assertFalse(valid_command_name("a\\b"))
+        self.assertFalse(valid_command_name("-flag"))
+        self.assertFalse(valid_command_name("foo;rm"))
+        self.assertFalse(valid_command_name(""))
+        self.assertEqual(find_binary("../sh", "/bin"), "")
+        self.assertEqual(find_binary("a/b", "/usr/bin"), "")
+        argv = rpm_argv(["nmap", "-evil", "foo/bar", "python3-impacket", "nmap"])
+        self.assertEqual(
+            argv,
+            [
+                "rpm",
+                "-q",
+                "--qf",
+                "%{NAME}\\t%{VERSION}-%{RELEASE}\\n",
+                "--",
+                "nmap",
+                "python3-impacket",
+            ],
+        )
+        self.assertEqual(rpm_argv(["../rpm"]), [])
+
+    def test_hostile_catalog_values(self):
+        base = """
+[meta]
+fedora_release = "44"
+checked = "2026-10-16"
+
+[[groups]]
+id = "recon"
+title = "Recon"
+summary = "Test."
+
+[[tools]]
+id = "bad"
+group = "recon"
+name = "Bad"
+purpose = "Bad."
+upstream = "https://example.com"
+license = "Apache-2.0"
+fedora = "official"
+fedora_package = "nmap"
+binary = "BIN"
+"""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "tools.toml"
+            path.write_text(base.replace("BIN", "../nmap"), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                load_catalog(path)
+            path.write_text(base.replace("BIN", "nmap").replace('fedora_package = "nmap"', 'fedora_package = "foo;bar"'), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                load_catalog(path)
+
+    def test_catalog_lookup_does_not_walk_parents(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            parent = root / "parent"
+            child = parent / "child"
+            (parent / "catalog").mkdir(parents=True)
+            child.mkdir()
+            (parent / "catalog" / "tools.toml").write_text("not-a-catalog\n", encoding="utf-8")
+            previous = os.getcwd()
+            env = os.environ.pop("T2OFFSEC_CATALOG", None)
+            try:
+                os.chdir(child)
+                if INSTALLED_CATALOG.is_file():
+                    self.assertEqual(find_catalog(), INSTALLED_CATALOG)
+                else:
+                    with self.assertRaises(FileNotFoundError):
+                        find_catalog()
+            finally:
+                os.chdir(previous)
+                if env is None:
+                    os.environ.pop("T2OFFSEC_CATALOG", None)
+                else:
+                    os.environ["T2OFFSEC_CATALOG"] = env
+
+    def test_unreadable_or_invalid_catalog_is_a_clean_error(self):
+        self.assertEqual(main(["--catalog", "/dev/null", "groups"]), 2)
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(main(["--catalog", tmp, "groups"]), 2)
+
+    def test_broken_pipe_exits_cleanly(self):
+        env = {**os.environ, "PYTHONPATH": str(ROOT / "python" / "src")}
+        proc = subprocess.Popen(
+            ["python3", "-m", "t2offsec", "manual"],
+            cwd=ROOT,
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        assert proc.stdout is not None and proc.stderr is not None
+        proc.stdout.close()
+        err = proc.stderr.read()
+        proc.stderr.close()
+        code = proc.wait(timeout=20)
+        self.assertEqual(code, 0, err.decode(errors="replace"))
+
+    def test_versions_match(self):
+        self.assertEqual(__version__, PACKAGE_VERSION)
+        self.assertEqual(PACKAGE_VERSION, "0.1.0")
+        pyproject = (ROOT / "python" / "pyproject.toml").read_text(encoding="utf-8")
+        cargo = (ROOT / "rust" / "t2offsec-inventory" / "Cargo.toml").read_text(encoding="utf-8")
+        spec = (ROOT / "packaging" / f"{PACKAGE_NAME}.spec").read_text(encoding="utf-8")
+        notes = (ROOT / "docs" / "offensive" / "release-notes.md").read_text(encoding="utf-8")
+        self.assertIn(f'version = "{PACKAGE_VERSION}"', pyproject)
+        self.assertIn(f'version = "{PACKAGE_VERSION}"', cargo)
+        self.assertIn(f"Version:        {PACKAGE_VERSION}", spec)
+        self.assertIn(f"# {PACKAGE_NAME} {PACKAGE_VERSION}", notes)
+        self.assertIn("t2refit-0.1.0", notes)
+        self.assertNotIn("sudo dnf install raccoonix-t2", (ROOT / "docs" / "offensive" / "manual.md").read_text(encoding="utf-8"))
 
 
 class CliOutputTests(unittest.TestCase):

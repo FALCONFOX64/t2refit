@@ -55,11 +55,22 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    try:
+        return _run(argv)
+    except BrokenPipeError:
+        try:
+            sys.stdout.close()
+        except OSError:
+            pass
+        return 0
+
+
+def _run(argv: list[str] | None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
         catalog = load_catalog(find_catalog(args.catalog))
-    except (FileNotFoundError, ValueError, KeyError) as exc:
+    except (OSError, ValueError, KeyError) as exc:
         print(f"t2offsec: {exc}", file=sys.stderr)
         return 2
 

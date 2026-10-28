@@ -1,6 +1,6 @@
 # Install tool groups on Fedora
 
-The package that carries the catalog itself is `raccoonix-t2`. Its install steps, and one entry for every tool, are in the [user manual](manual.md). This page is the next step: adding a group of lab tools on a Fedora machine you administer.
+The package that carries the catalog itself is `raccoonix-t2`. The git repository is t2refit. The commands are `t2offsec` and `t2offsec-inventory`. There is no public dnf repository for `raccoonix-t2` yet. Build that RPM locally with the steps in the [user manual](manual.md). This page is the next step: adding a group of lab tools that Fedora already ships, on a machine you administer.
 
 Package names below come from `catalog/tools.toml`. Fedora 44 repository membership was read from mdapi on 2026-10-16 (observed via that public index, not by installing on the MacBookPro16,1). Re-check a name before you rely on it months later.
 

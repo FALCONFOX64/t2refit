@@ -6,7 +6,7 @@
 //! that are not on the deny list. Nothing here opens a network connection
 //! on its own.
 
-use crate::catalog::Tool;
+use crate::catalog::{valid_token, Tool};
 use std::collections::HashMap;
 use std::io::Read;
 use std::path::{Path, PathBuf};
@@ -68,7 +68,7 @@ pub trait Lookup {
 }
 
 pub fn version_probe_allowed(binary: &str, args: &[String]) -> bool {
-    if binary.is_empty() || args.is_empty() || args.len() > 4 {
+    if !valid_token(binary) || args.is_empty() || args.len() > 4 {
         return false;
     }
     if NEVER_EXEC.iter().any(|name| *name == binary) {
@@ -124,7 +124,9 @@ pub fn inventory(tools: &[Tool], lookup: &dyn Lookup) -> Vec<Row> {
                     id: tool.id.clone(),
                     group: tool.group.clone(),
                     present,
-                    path: found.map(|path| path.display().to_string()).unwrap_or_default(),
+                    path: found
+                        .map(|path| path.display().to_string())
+                        .unwrap_or_default(),
                     rpm_version,
                     tool_version: version,
                     note,
@@ -136,7 +138,9 @@ pub fn inventory(tools: &[Tool], lookup: &dyn Lookup) -> Vec<Row> {
             id: tool.id.clone(),
             group: tool.group.clone(),
             present,
-            path: found.map(|path| path.display().to_string()).unwrap_or_default(),
+            path: found
+                .map(|path| path.display().to_string())
+                .unwrap_or_default(),
             rpm_version,
             tool_version,
             note,
@@ -149,7 +153,7 @@ pub struct SystemLookup;
 
 impl Lookup for SystemLookup {
     fn find_binary(&self, name: &str) -> Option<PathBuf> {
-        if name.is_empty() {
+        if !valid_token(name) {
             return None;
         }
         let mut dirs: Vec<PathBuf> = std::env::var_os("PATH")
@@ -163,6 +167,9 @@ impl Lookup for SystemLookup {
         }
         for dir in dirs {
             let candidate = dir.join(name);
+            if candidate.parent().as_ref() != Some(&dir.as_path()) {
+                continue;
+            }
             if candidate.is_file() {
                 return Some(candidate);
             }
@@ -171,27 +178,32 @@ impl Lookup for SystemLookup {
     }
 
     fn rpm_versions(&self, packages: &[String]) -> Option<HashMap<String, String>> {
-        if packages.is_empty() {
+        let mut names: Vec<&str> = Vec::new();
+        for package in packages {
+            if valid_token(package) && !names.contains(&package.as_str()) {
+                names.push(package.as_str());
+            }
+        }
+        if names.is_empty() {
             return Some(HashMap::new());
         }
-        if self.find_binary("rpm").is_none() {
-            return None;
-        }
+        self.find_binary("rpm")?;
         let mut command = Command::new("rpm");
         command
             .arg("-q")
             .arg("--qf")
             .arg("%{NAME}\\t%{VERSION}-%{RELEASE}\\n")
-            .args(packages)
-            .stdin(Stdio::null())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::null());
-        let output = command.output().ok()?;
+            .arg("--")
+            .args(&names);
+        let captured = capture(&mut command, Duration::from_secs(15), 256 * 1024)?;
+        if captured.timed_out {
+            return None;
+        }
         let mut found = HashMap::new();
-        let text = String::from_utf8_lossy(&output.stdout);
+        let text = String::from_utf8_lossy(&captured.stdout);
         for line in text.lines() {
             if let Some((name, version)) = line.split_once('\t') {
-                if !name.is_empty() && !version.is_empty() && !line.contains("not installed") {
+                if valid_token(name) && !version.is_empty() && !line.contains("not installed") {
                     found.insert(name.to_string(), version.trim().to_string());
                 }
             }
@@ -203,21 +215,15 @@ impl Lookup for SystemLookup {
         if !is_distribution_name(distribution) {
             return None;
         }
-        let script = format!(
-            "import importlib.metadata as m\nprint(m.version(\"{distribution}\"))"
-        );
-        let output = Command::new("python3")
-            .arg("-c")
-            .arg(script)
-            .stdin(Stdio::null())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::null())
-            .output()
-            .ok()?;
-        if !output.status.success() {
+        let script =
+            format!("import importlib.metadata as m\nprint(m.version(\"{distribution}\"))");
+        let mut command = Command::new("python3");
+        command.arg("-c").arg(script);
+        let captured = capture(&mut command, Duration::from_secs(2), 4096)?;
+        if captured.timed_out {
             return None;
         }
-        let line = first_line(&String::from_utf8_lossy(&output.stdout));
+        let line = first_line(&String::from_utf8_lossy(&captured.stdout));
         if line.is_empty() {
             None
         } else {
@@ -226,7 +232,10 @@ impl Lookup for SystemLookup {
     }
 
     fn command_version(&self, path: &Path, args: &[String]) -> Option<String> {
-        let name = path.file_name().and_then(|value| value.to_str()).unwrap_or("");
+        let name = path
+            .file_name()
+            .and_then(|value| value.to_str())
+            .unwrap_or("");
         if !version_probe_allowed(name, args) {
             return None;
         }
@@ -257,49 +266,73 @@ fn first_line(text: &str) -> String {
         .collect()
 }
 
-fn run_version(path: &Path, args: &[String]) -> Option<String> {
-    let mut child = Command::new(path)
-        .args(args)
+struct Captured {
+    timed_out: bool,
+    stdout: Vec<u8>,
+    stderr: Vec<u8>,
+}
+
+fn read_capped(mut reader: impl Read, limit: usize) -> Vec<u8> {
+    let mut buf = vec![0u8; limit];
+    let mut total = 0;
+    while total < limit {
+        match reader.read(&mut buf[total..]) {
+            Ok(0) => break,
+            Ok(n) => total += n,
+            Err(err) if err.kind() == std::io::ErrorKind::Interrupted => continue,
+            Err(_) => break,
+        }
+    }
+    buf.truncate(total);
+    buf
+}
+
+fn capture(command: &mut Command, timeout: Duration, cap: usize) -> Option<Captured> {
+    command
         .stdin(Stdio::null())
         .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .ok()?;
-    let mut stdout = child.stdout.take()?;
-    let mut stderr = child.stderr.take()?;
-    let out_thread = thread::spawn(move || {
-        let mut buf = Vec::new();
-        let _ = stdout.read_to_end(&mut buf);
-        buf
-    });
-    let err_thread = thread::spawn(move || {
-        let mut buf = Vec::new();
-        let _ = stderr.read_to_end(&mut buf);
-        buf
-    });
+        .stderr(Stdio::piped());
+    let mut child = command.spawn().ok()?;
+    let stdout = child.stdout.take()?;
+    let stderr = child.stderr.take()?;
+    let out_thread = thread::spawn(move || read_capped(stdout, cap));
+    let err_thread = thread::spawn(move || read_capped(stderr, cap));
     let start = Instant::now();
-    let finished = loop {
+    let timed_out = loop {
         match child.try_wait() {
-            Ok(Some(_)) => break true,
-            Ok(None) if start.elapsed() > Duration::from_secs(2) => {
+            Ok(Some(_)) => break false,
+            Ok(None) if start.elapsed() >= timeout => {
                 let _ = child.kill();
                 let _ = child.wait();
-                break false;
+                break true;
             }
             Ok(None) => thread::sleep(Duration::from_millis(20)),
-            Err(_) => break false,
+            Err(_) => {
+                let _ = child.kill();
+                let _ = child.wait();
+                break true;
+            }
         }
     };
-    let out = out_thread.join().unwrap_or_default();
-    let err = err_thread.join().unwrap_or_default();
-    if !finished {
+    Some(Captured {
+        timed_out,
+        stdout: out_thread.join().unwrap_or_default(),
+        stderr: err_thread.join().unwrap_or_default(),
+    })
+}
+
+fn run_version(path: &Path, args: &[String]) -> Option<String> {
+    let mut command = Command::new(path);
+    command.args(args);
+    let captured = capture(&mut command, Duration::from_secs(2), 4096)?;
+    if captured.timed_out {
         return None;
     }
-    let line = first_line(&String::from_utf8_lossy(&out));
+    let line = first_line(&String::from_utf8_lossy(&captured.stdout));
     if !line.is_empty() {
         return Some(line);
     }
-    let err_line = first_line(&String::from_utf8_lossy(&err));
+    let err_line = first_line(&String::from_utf8_lossy(&captured.stderr));
     if err_line.is_empty() {
         None
     } else {
@@ -310,7 +343,7 @@ fn run_version(path: &Path, args: &[String]) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::catalog::{load, Tool};
+    use crate::catalog::{load, valid_token, Tool};
     use std::cell::RefCell;
     use std::path::PathBuf;
 
@@ -364,7 +397,10 @@ mod tests {
             calls: RefCell::new(Vec::new()),
             binaries: HashMap::from([
                 ("nmap".to_string(), PathBuf::from("/usr/bin/nmap")),
-                ("proxychains4".to_string(), PathBuf::from("/usr/bin/proxychains4")),
+                (
+                    "proxychains4".to_string(),
+                    PathBuf::from("/usr/bin/proxychains4"),
+                ),
                 ("john".to_string(), PathBuf::from("/usr/bin/john")),
             ]),
         };
@@ -398,6 +434,48 @@ mod tests {
                 "{} would not be probed",
                 tool.id
             );
+            assert!(
+                valid_token(&tool.binary),
+                "{} binary is not a single name",
+                tool.id
+            );
+            if !tool.fedora_package.is_empty() {
+                assert!(
+                    valid_token(&tool.fedora_package),
+                    "{} package is not a single name",
+                    tool.id
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn slash_binary_is_not_probed_or_found() {
+        assert!(!version_probe_allowed(
+            "../nmap",
+            &["--version".to_string()]
+        ));
+        assert!(!valid_token("a/b"));
+        assert!(!valid_token("a\\b"));
+        let lookup = SystemLookup;
+        assert!(lookup.find_binary("../sh").is_none());
+        assert!(lookup.find_binary("a/b").is_none());
+    }
+
+    #[test]
+    fn version_probe_times_out_and_caps_output() {
+        let sleep = Path::new("/bin/sleep");
+        if sleep.is_file() {
+            let start = Instant::now();
+            assert!(run_version(sleep, &["30".to_string()]).is_none());
+            assert!(start.elapsed() < Duration::from_secs(8));
+        }
+        let python = Path::new("/usr/bin/python3");
+        if python.is_file() {
+            let line = run_version(python, &["-c".to_string(), "print('A'*20000)".to_string()])
+                .expect("python output");
+            assert!(line.len() <= 160);
+            assert!(line.starts_with('A'));
         }
     }
 }
