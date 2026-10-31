@@ -33,10 +33,10 @@ raccoonix T2 is the Fedora package of the t2refit offensive-lab catalog
 for Intel Macs with an Apple T2 chip. The git repository is t2refit. The
 RPM name is raccoonix-t2. The commands are t2offsec and t2offsec-inventory.
 
-The RPM installs those two read-only checkers, the catalog at
-/usr/share/raccoonix-t2/catalog/tools.toml, the user manual, the Apache-2.0
-license, and NOTICE. It does not include third-party tool source, wordlists,
-firmware, or proprietary blobs. Those tools keep the licenses in the manual.
+The RPM installs those two read-only checkers, the catalog, the user
+manual, the Apache-2.0 license, and NOTICE. It does not include
+third-party tool source, wordlists, firmware, or proprietary blobs.
+Those tools keep the licenses in the manual.
 
 %generate_buildrequires
 %pyproject_buildrequires -d python
@@ -86,6 +86,7 @@ cargo test --locked --offline --manifest-path rust/t2offsec-inventory/Cargo.toml
 * Sat Oct 31 2026 t2refit contributors <217426068+FALCONFOX64@users.noreply.github.com> - 0.1.0-1
 - BuildRequire python3-pip for the pyproject generator and strip the inventory binary.
 - Package the t2offsec entry-point script.
+- Drop the catalog path from the description so rpmlint can spell-check it.
 * Wed Oct 28 2026 t2refit contributors <217426068+FALCONFOX64@users.noreply.github.com> - 0.1.0-1
 - Package t2offsec, t2offsec-inventory, the catalog, the manual, and NOTICE.
 - Build the Python project with the pyproject macros. No release is published.
