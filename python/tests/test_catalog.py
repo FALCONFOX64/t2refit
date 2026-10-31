@@ -126,6 +126,10 @@ class CatalogTests(unittest.TestCase):
             str(INSTALLED_CATALOG),
             f"/usr/share/{PACKAGE_NAME}/catalog/tools.toml",
         )
+        description = spec.split("%description", 1)[1].split("\n%", 1)[0]
+        # rpmlint 2.8 spell-checks this block and failed CI on these pieces.
+        self.assertNotIn("/usr/", description)
+        self.assertNotIn(".toml", description)
 
     def test_no_procedure_snippets(self):
         blobs = [(ROOT / "catalog" / "tools.toml").read_text(encoding="utf-8").lower()]

@@ -60,6 +60,8 @@ cargo build --locked --release --manifest-path rust/t2offsec-inventory/Cargo.tom
 install -D -p -m 0755 %{raccoonix_cargo_target}/release/t2offsec-inventory \
     %{buildroot}%{_bindir}/t2offsec-inventory
 strip --strip-unneeded %{buildroot}%{_bindir}/t2offsec-inventory
+# Installed catalog path: /usr/share/raccoonix-t2/catalog/tools.toml
+# The description omits that path. rpmlint spell-checks it and rejects usr and toml.
 install -D -p -m 0644 catalog/tools.toml \
     %{buildroot}%{_datadir}/%{name}/catalog/tools.toml
 
@@ -87,6 +89,7 @@ cargo test --locked --offline --manifest-path rust/t2offsec-inventory/Cargo.toml
 - BuildRequire python3-pip for the pyproject generator and strip the inventory binary.
 - Package the t2offsec entry-point script.
 - Drop the catalog path from the description so rpmlint can spell-check it.
+- Record that same path in a comment next to the install.
 * Wed Oct 28 2026 t2refit contributors <217426068+FALCONFOX64@users.noreply.github.com> - 0.1.0-1
 - Package t2offsec, t2offsec-inventory, the catalog, the manual, and NOTICE.
 - Build the Python project with the pyproject macros. No release is published.
