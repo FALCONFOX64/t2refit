@@ -19,10 +19,12 @@ Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz#/t2refit-%{version}.
 %global raccoonix_cargo_target %{_builddir}/raccoonix-cargo-target
 
 BuildRequires:  python3-devel
+BuildRequires:  python3-pip
 BuildRequires:  python3-setuptools >= 77
 BuildRequires:  cargo
 BuildRequires:  rust
 BuildRequires:  gcc
+BuildRequires:  binutils
 
 Requires:       python3
 
@@ -47,6 +49,9 @@ firmware, or proprietary blobs. Those tools keep the licenses in the manual.
 export CARGO_HOME=%{raccoonix_cargo_home}
 export CARGO_TARGET_DIR=%{raccoonix_cargo_target}
 export CARGO_PROFILE_RELEASE_STRIP=symbols
+# The rpm environment passes -Cstrip=none so a debuginfo package can be
+# built. This package does not ship one, and the last -Cstrip value wins.
+export RUSTFLAGS="${RUSTFLAGS:+${RUSTFLAGS} }-Cstrip=symbols"
 cargo build --locked --release --manifest-path rust/t2offsec-inventory/Cargo.toml
 
 %install
@@ -54,6 +59,7 @@ cargo build --locked --release --manifest-path rust/t2offsec-inventory/Cargo.tom
 %pyproject_save_files t2offsec
 install -D -p -m 0755 %{raccoonix_cargo_target}/release/t2offsec-inventory \
     %{buildroot}%{_bindir}/t2offsec-inventory
+strip --strip-unneeded %{buildroot}%{_bindir}/t2offsec-inventory
 install -D -p -m 0644 catalog/tools.toml \
     %{buildroot}%{_datadir}/%{name}/catalog/tools.toml
 
@@ -76,6 +82,8 @@ cargo test --locked --offline --manifest-path rust/t2offsec-inventory/Cargo.toml
 %{_datadir}/%{name}/catalog/tools.toml
 
 %changelog
+* Sat Oct 31 2026 t2refit contributors <217426068+FALCONFOX64@users.noreply.github.com> - 0.1.0-1
+- BuildRequire python3-pip for the pyproject generator and strip the inventory binary.
 * Wed Oct 28 2026 t2refit contributors <217426068+FALCONFOX64@users.noreply.github.com> - 0.1.0-1
 - Package t2offsec, t2offsec-inventory, the catalog, the manual, and NOTICE.
 - Build the Python project with the pyproject macros. No release is published.

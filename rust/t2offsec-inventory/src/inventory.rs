@@ -71,7 +71,7 @@ pub fn version_probe_allowed(binary: &str, args: &[String]) -> bool {
     if !valid_token(binary) || args.is_empty() || args.len() > 4 {
         return false;
     }
-    if NEVER_EXEC.iter().any(|name| *name == binary) {
+    if NEVER_EXEC.contains(&binary) {
         return false;
     }
     args.iter()

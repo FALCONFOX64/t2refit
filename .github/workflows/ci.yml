@@ -71,8 +71,8 @@ jobs:
             fedora:44 \
             bash -euxo pipefail -c '
               dnf -y install --setopt=install_weak_deps=False \
-                rpm-build rpmlint python3-devel python3-setuptools \
-                rust cargo gcc make
+                rpm-build rpmlint python3-devel python3-pip python3-setuptools \
+                rust cargo gcc binutils make
               rpmbuild -ba packaging/raccoonix-t2.spec --define "_topdir /rpmbuild"
               rpmlint packaging/raccoonix-t2.spec /rpmbuild/RPMS/*/*.rpm /rpmbuild/SRPMS/*.rpm
             '

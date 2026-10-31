@@ -96,7 +96,7 @@ impl Catalog {
             .collect();
         let mut wanted: Vec<&str> = Vec::new();
         for tool_id in tools {
-            if !wanted.iter().any(|seen| *seen == tool_id.as_str()) {
+            if !wanted.contains(&tool_id.as_str()) {
                 wanted.push(tool_id.as_str());
             }
         }
@@ -106,7 +106,7 @@ impl Catalog {
                     return Err(format!("unknown tool {tool_id}"));
                 }
             }
-            chosen.retain(|tool| wanted.iter().any(|tool_id| *tool_id == tool.id.as_str()));
+            chosen.retain(|tool| wanted.contains(&tool.id.as_str()));
             if chosen.len() != wanted.len() {
                 return Err("one of the tools is not in that group".to_string());
             }

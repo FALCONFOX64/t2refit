@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from t2offsec import __version__
@@ -58,8 +59,15 @@ def main(argv: list[str] | None = None) -> int:
     try:
         return _run(argv)
     except BrokenPipeError:
+        # Python 3.14 flushes stdout again during shutdown. A closed pipe
+        # there is an ignored BrokenPipeError and exit status 120, which
+        # replaces the status returned here. Point the flush at /dev/null.
         try:
-            sys.stdout.close()
+            null_fd = os.open(os.devnull, os.O_WRONLY)
+            try:
+                os.dup2(null_fd, sys.stdout.fileno())
+            finally:
+                os.close(null_fd)
         except OSError:
             pass
         return 0
