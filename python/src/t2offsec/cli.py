@@ -55,22 +55,38 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _silence_broken_pipe() -> None:
+    """Keep a closed pipe from becoming Python 3.14's exit status 120.
+
+    The interpreter flushes sys.stdout again during shutdown. If that
+    flush still sees the closed pipe, the ignored BrokenPipeError
+    replaces the status returned here. A new stream, plus fd 1 pointed
+    at /dev/null, gives that flush somewhere to succeed.
+    """
+    try:
+        sys.stdout = open(os.devnull, "w")
+    except OSError:
+        pass
+    try:
+        null_fd = os.open(os.devnull, os.O_WRONLY)
+    except OSError:
+        return
+    try:
+        os.dup2(null_fd, 1)
+    finally:
+        os.close(null_fd)
+
+
 def main(argv: list[str] | None = None) -> int:
     try:
-        return _run(argv)
+        code = _run(argv)
+        # A large write can sit in the block buffer until shutdown.
+        # Flush here so a closed pipe raises inside this handler.
+        sys.stdout.flush()
     except BrokenPipeError:
-        # Python 3.14 flushes stdout again during shutdown. A closed pipe
-        # there is an ignored BrokenPipeError and exit status 120, which
-        # replaces the status returned here. Point the flush at /dev/null.
-        try:
-            null_fd = os.open(os.devnull, os.O_WRONLY)
-            try:
-                os.dup2(null_fd, sys.stdout.fileno())
-            finally:
-                os.close(null_fd)
-        except OSError:
-            pass
+        _silence_broken_pipe()
         return 0
+    return code
 
 
 def _run(argv: list[str] | None) -> int:

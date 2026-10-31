@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -264,15 +265,20 @@ binary = "BIN"
 
     def test_broken_pipe_exits_cleanly(self):
         env = {**os.environ, "PYTHONPATH": str(ROOT / "python" / "src")}
+        # Close the read end before the child starts so the first flush
+        # sees EPIPE. Closing after Popen races the child and can hide
+        # the Python 3.14 shutdown-flush failure.
+        read_fd, write_fd = os.pipe()
+        os.close(read_fd)
         proc = subprocess.Popen(
-            ["python3", "-m", "t2offsec", "manual"],
+            [sys.executable, "-m", "t2offsec", "manual"],
             cwd=ROOT,
             env=env,
-            stdout=subprocess.PIPE,
+            stdout=write_fd,
             stderr=subprocess.PIPE,
         )
-        assert proc.stdout is not None and proc.stderr is not None
-        proc.stdout.close()
+        os.close(write_fd)
+        assert proc.stderr is not None
         err = proc.stderr.read()
         proc.stderr.close()
         code = proc.wait(timeout=20)
