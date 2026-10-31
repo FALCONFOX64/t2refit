@@ -6,6 +6,9 @@ license = "Apache-2.0"
 description = "Read-only install and version inventory for the t2refit offensive catalog"
 publish = false
 
+[profile.release]
+strip = "symbols"
+
 [dependencies]
 # Pinned for the repo's Rust 1.83 toolchain. Newer releases need edition 2024.
 serde = { version = "=1.0.210", features = ["derive"] }

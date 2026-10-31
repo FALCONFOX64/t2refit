@@ -5,12 +5,20 @@
 from __future__ import annotations
 
 import os
+import re
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
 FEDORA_KINDS = frozenset({"official", "copr", "upstream"})
 ID_OK = set("abcdefghijklmnopqrstuvwxyz0123456789-")
+# Fedora RPM name for this lab catalog. Lowercase and hyphenated.
+PACKAGE_NAME = "raccoonix-t2"
+PACKAGE_DISPLAY = "raccoonix T2"
+PACKAGE_VERSION = "0.1.0"
+INSTALLED_CATALOG = Path("/usr/share") / PACKAGE_NAME / "catalog" / "tools.toml"
+# A command or RPM name: one path segment, no separators.
+COMMAND_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._+-]{0,199}$")
 
 
 @dataclass(frozen=True)
@@ -85,7 +93,18 @@ class Catalog:
         return chosen
 
 
+def valid_command_name(value: str) -> bool:
+    """True for a single RPM or command name. Rejects paths and empty strings."""
+    if not value or "/" in value or "\\" in value or "\0" in value:
+        return False
+    return COMMAND_NAME.fullmatch(value) is not None
+
+
 def find_catalog(explicit: str | None = None) -> Path:
+    """Resolve the catalog. Explicit path, then T2OFFSEC_CATALOG, then the
+    installed file, then catalog/tools.toml in the current directory only.
+    Parent directories are never searched.
+    """
     if explicit:
         path = Path(explicit)
         if not path.is_file():
@@ -97,25 +116,34 @@ def find_catalog(explicit: str | None = None) -> Path:
         if not path.is_file():
             raise FileNotFoundError(f"T2OFFSEC_CATALOG is not a file: {path}")
         return path
-    starts = [Path.cwd(), Path(__file__).resolve()]
-    seen: set[Path] = set()
-    for start in starts:
-        for candidate in [start, *start.parents]:
-            if candidate in seen:
-                continue
-            seen.add(candidate)
-            path = candidate / "catalog" / "tools.toml"
-            if path.is_file():
-                return path
+    if INSTALLED_CATALOG.is_file():
+        return INSTALLED_CATALOG
+    cwd_catalog = Path.cwd() / "catalog" / "tools.toml"
+    if cwd_catalog.is_file():
+        return cwd_catalog
     raise FileNotFoundError(
-        "catalog/tools.toml not found; run from the t2refit repo or set T2OFFSEC_CATALOG"
+        "catalog/tools.toml not found; pass --catalog, set T2OFFSEC_CATALOG, "
+        f"install {PACKAGE_NAME}, or run from the t2refit repository root"
     )
 
 
 def load_catalog(path: Path | None = None) -> Catalog:
     catalog_path = path or find_catalog()
-    with catalog_path.open("rb") as handle:
-        raw = tomllib.load(handle)
+    try:
+        data = catalog_path.read_bytes()
+    except OSError as exc:
+        detail = exc.strerror or str(exc)
+        raise OSError(f"cannot read catalog {catalog_path}: {detail}") from exc
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise ValueError(f"catalog {catalog_path} is not UTF-8") from exc
+    try:
+        raw = tomllib.loads(text)
+    except tomllib.TOMLDecodeError as exc:
+        raise ValueError(f"catalog {catalog_path} is not valid TOML: {exc}") from exc
+    if not isinstance(raw, dict):
+        raise ValueError(f"catalog {catalog_path} must be a TOML table")
     return _parse(raw, catalog_path)
 
 
@@ -228,6 +256,10 @@ def _parse(raw: dict, path: Path) -> Catalog:
                 raise ValueError(f"{where} also_in repeats its own group")
         binary = _optional_str(row, "binary", where)
         distribution = _optional_str(row, "python_distribution", where)
+        if binary and not valid_command_name(binary):
+            raise ValueError(f"{where} binary {binary!r} must be a single command name")
+        if package and not valid_command_name(package):
+            raise ValueError(f"{where} fedora_package {package!r} must be a single package name")
         if not binary and not package and not distribution:
             raise ValueError(f"{where} needs a binary, fedora_package, or python_distribution")
         tools.append(

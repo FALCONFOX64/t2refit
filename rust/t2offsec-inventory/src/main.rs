@@ -37,7 +37,7 @@ fn run(args: Vec<String>) -> Result<u8, String> {
                 return Ok(0);
             }
             "--version" => {
-                println!("t2offsec-inventory 0.1.0");
+                println!("t2offsec-inventory {}", env!("CARGO_PKG_VERSION"));
                 return Ok(0);
             }
             "--catalog" => {
@@ -59,7 +59,10 @@ fn run(args: Vec<String>) -> Result<u8, String> {
     let selected = loaded.select(group.as_deref(), &tools)?;
     let rows = inventory(&selected, &SystemLookup);
     if as_json {
-        println!("{}", serde_json::to_string_pretty(&rows_json(&rows)).map_err(|err| err.to_string())?);
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&rows_json(&rows)).map_err(|err| err.to_string())?
+        );
     } else {
         for row in &rows {
             let state = if row.present { "present" } else { "absent" };

@@ -6,12 +6,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from t2offsec import __version__
 from t2offsec.catalog import find_catalog, load_catalog
 from t2offsec.presence import check_tools
-from t2offsec.render import render_markdown
+from t2offsec.render import render_manual, render_markdown
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -50,15 +51,50 @@ def _parser() -> argparse.ArgumentParser:
 
     sub.add_parser("gaps", help="list tools with no official Fedora package")
     sub.add_parser("catalog", help="print the Markdown catalog")
+    sub.add_parser("manual", help="print the raccoonix-t2 user manual")
     return parser
 
 
+def _silence_broken_pipe() -> None:
+    """Keep a closed pipe from becoming Python 3.14's exit status 120.
+
+    The interpreter flushes sys.stdout again during shutdown. If that
+    flush still sees the closed pipe, the ignored BrokenPipeError
+    replaces the status returned here. A new stream, plus fd 1 pointed
+    at /dev/null, gives that flush somewhere to succeed.
+    """
+    try:
+        sys.stdout = open(os.devnull, "w")
+    except OSError:
+        pass
+    try:
+        null_fd = os.open(os.devnull, os.O_WRONLY)
+    except OSError:
+        return
+    try:
+        os.dup2(null_fd, 1)
+    finally:
+        os.close(null_fd)
+
+
 def main(argv: list[str] | None = None) -> int:
+    try:
+        code = _run(argv)
+        # A large write can sit in the block buffer until shutdown.
+        # Flush here so a closed pipe raises inside this handler.
+        sys.stdout.flush()
+    except BrokenPipeError:
+        _silence_broken_pipe()
+        return 0
+    return code
+
+
+def _run(argv: list[str] | None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
         catalog = load_catalog(find_catalog(args.catalog))
-    except (FileNotFoundError, ValueError, KeyError) as exc:
+    except (OSError, ValueError, KeyError) as exc:
         print(f"t2offsec: {exc}", file=sys.stderr)
         return 2
 
@@ -75,6 +111,9 @@ def main(argv: list[str] | None = None) -> int:
             return _gaps(catalog)
         if args.command == "catalog":
             sys.stdout.write(render_markdown(catalog))
+            return 0
+        if args.command == "manual":
+            sys.stdout.write(render_manual(catalog))
             return 0
     except KeyError as exc:
         print(f"t2offsec: {exc}", file=sys.stderr)

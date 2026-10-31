@@ -7,7 +7,7 @@ Changes need evidence. A device id plus command output, or a quote from `scripts
 - Scanner checks that stay read-only.
 - Documentation of a gap, with the upstream project that should own it.
 - A small patch written so it can be sent upstream, when this repo is the right place to draft it.
-- The offensive-lab catalog (`catalog/tools.toml`), its docs under `docs/offensive/`, and the read-only Python and Rust checkers. New code there is Python or Rust.
+- The offensive-lab catalog (`catalog/tools.toml`), its docs under `docs/offensive/` (including the raccoonix T2 manual), the `raccoonix-t2` RPM spec, `NOTICE`, and the read-only Python and Rust checkers. New code there is Python or Rust.
 
 ## Out of bounds
 
