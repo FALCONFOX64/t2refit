@@ -76,6 +76,7 @@ cargo test --locked --offline --manifest-path rust/t2offsec-inventory/Cargo.toml
 %doc SECURITY.md
 %doc docs/offensive/manual.md
 %doc docs/offensive/release-notes.md
+%{_bindir}/t2offsec
 %{_bindir}/t2offsec-inventory
 %dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/catalog
@@ -84,6 +85,7 @@ cargo test --locked --offline --manifest-path rust/t2offsec-inventory/Cargo.toml
 %changelog
 * Sat Oct 31 2026 t2refit contributors <217426068+FALCONFOX64@users.noreply.github.com> - 0.1.0-1
 - BuildRequire python3-pip for the pyproject generator and strip the inventory binary.
+- Package the t2offsec entry-point script.
 * Wed Oct 28 2026 t2refit contributors <217426068+FALCONFOX64@users.noreply.github.com> - 0.1.0-1
 - Package t2offsec, t2offsec-inventory, the catalog, the manual, and NOTICE.
 - Build the Python project with the pyproject macros. No release is published.
